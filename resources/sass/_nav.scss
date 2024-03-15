@@ -1,0 +1,121 @@
+nav.navbar {
+    border-bottom: 1px solid $border-color;
+    height: 60px;
+    justify-content: flex-end;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.nav {
+    .nav-link {
+        color: var(--bs-black);
+    }
+
+    .nav-link:hover,
+    .nav-item.active > .nav-link {
+        color: var(--bs-white);
+        background-color: var(--bs-primary);
+    }
+
+    .nav-item > .current {
+        color: var(--bs-primary);
+        background-color: var(--bs-white);
+    }
+
+    > a {
+        border-bottom: 1px solid $border-color;
+        height: 60px;
+    }
+
+    .nav-item {
+        .nav-link {
+            border-bottom: 1px solid $border-color;
+        }
+    }
+}
+
+ul.navbar-nav {
+    display: flex;
+    align-items: center;
+}
+
+ul.dropdown-menu.dropdown-menu-end.show {
+    border-radius: 20px;
+    border: 1px solid $border-color;
+}
+
+@media (max-width: 767px) {
+    ul.navbar-nav {
+        display: flex;
+        align-items: flex-end;
+    }
+    .navbar-collapse.show {
+        border-bottom: 1px solid $border-color;
+    }
+    .navbar-collapse {
+        background: var(--bs-white);
+        padding: 20px 20px 0 20px;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+        position: fixed;
+        right: 0;
+        width: 100%;
+        top: 60px;
+    }
+}
+
+li.nav-item.dropdown {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.dropdown {
+    display: flex;
+    align-items: center;
+}
+
+
+.nav-item {
+    ul {
+        li {
+            a {
+                background: unset;
+                color: var(--bs-black);
+            }
+        }
+    }
+}
+
+button.navbar-toggler {
+    position: fixed;
+    right: 0;
+
+    &:focus {
+        box-shadow: 0 0 10px $border-color;
+    }
+}
+
+
+.navbar-collapse {
+    flex-grow: unset;
+}
+
+.content {
+    .navbar {
+        .container-fluid {
+            z-index: 99999;
+            height: 100%;
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+}
+
+.logged-in {
+    .navbar {
+        .container-fluid {
+            justify-content: flex-end;
+        }
+    }
+}

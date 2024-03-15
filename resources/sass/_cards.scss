@@ -1,0 +1,10 @@
+.card {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #0d6efd2e;
+
+    .card-header {
+        background-color: var(--bs-primary);
+        color: var(--bs-white);
+    }
+}

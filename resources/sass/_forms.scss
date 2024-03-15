@@ -1,0 +1,17 @@
+.form-control {
+    resize: none;
+    background-color: var(--bs-white);
+    background-clip: padding-box;
+    border: 1px solid $border-color;
+    border-radius: 20px;
+}
+
+.input-group {
+    .input-group-append {
+        button {
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+            height: 100%;
+        }
+    }
+}

@@ -1,0 +1,25 @@
+/* Fonts */
+@import '_fonts.scss';
+
+/* Variables */
+@import '_variables.scss';
+
+/* Bootstrap */
+@import 'bootstrap/scss/bootstrap';
+
+/* Datepicker */
+@import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
+
+/* DataTables */
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+@import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css";
+@import 'datatables.net-select-bs5/css/select.bootstrap5.css';
+
+/* Theme */
+@import "_style.scss";
+@import "_buttons.scss";
+@import "_cards.scss";
+@import "_datatables.scss";
+@import "_forms.scss";
+@import "_nav.scss";

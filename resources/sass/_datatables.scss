@@ -1,0 +1,10 @@
+.table.dataTable {
+    width: 100% !important;
+}
+
+.dataTables_wrapper .row:nth-child(3) > div {
+    overflow-x: auto;
+}
+select[name="users-table_length"] {
+    border-radius: 20px;
+}

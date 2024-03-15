@@ -1,0 +1,25 @@
+{
+    "name": "bunker/laravel-speed-date",
+    "description": "this is a dating event booking script. it can create event, add user to the event both using web form and by uploading files. it requires laravel 10.10",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "Bunker\\LaravelSpeedDate\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mehrab Ahmed Sourov",
+            "email": "yieoyo@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bunker\\LaravelSpeedDate\\DatingServiceProvider"
+            ]
+        }
+    }
+}
