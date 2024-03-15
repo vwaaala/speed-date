@@ -28,10 +28,13 @@ Route::get('/', function () {
 Auth::routes(['verify' => false, 'register' => false]);
 
 // Group routes that require authentication middleware
-Route::middleware(['auth', 'web'])->group(function () {
+Route::middleware(['auth', 'web', 'redirectusertoevent'])->group(function () {
 
     // Defining route for the home page after authentication
-    Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    // Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard',function(){
+        return redirect()->route('speed_date.events.index');
+    })->name('dashboard');
 
     // Defining routes for managing permissions
     Route::get('permissions', [App\Http\Controllers\PermissionController::class, 'index'])->name('permissions.index');

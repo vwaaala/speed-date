@@ -3,7 +3,7 @@
 use Bunker\LaravelSpeedDate\Http\Controllers\DatingEventController;
 use Illuminate\Support\Facades\Route;
 
-Route::name('speed_date.')->middleware(['web', 'auth'])->group(function () {
+Route::name('speed_date.')->middleware(['web', 'auth', 'redirectusertoevent'])->group(function () {
     Route::resources(['events' => DatingEventController::class]);
     Route::prefix('events')->name('events.')->group(function () {
         Route::controller(DatingEventController::class)->group(function () {

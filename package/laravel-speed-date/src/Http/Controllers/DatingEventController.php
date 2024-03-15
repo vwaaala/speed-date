@@ -127,6 +127,7 @@ class DatingEventController extends Controller
                         $newUser = User::create(['uuid' => str()->uuid(), 'name' => $name, 'email' => $email, 'password' => bcrypt($password)]);
                         UserBio::create(['user_id' => $newUser->id, 'nickname' => $nickname, 'city' => $city, 'occupation' => $occupation, 'phone' => $phone, 'birthdate' => $birthdate, 'gender' => $gender, 'looking_for' => $looking_for]);
                         $event->participants()->syncWithoutDetaching($newUser->id);
+                        $newUser->assignRole('User');
                     }
                 }
 

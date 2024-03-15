@@ -89,16 +89,15 @@ class UserController extends Controller
 //            abort(403, 'You are not authorized');
         }
         if ($user->update(['name' => $request->get('name'), 'status' => $request->get('status') != null ? $request->get('status') : $user->status])) {
-            // Check if avatar file exists in request
+            // Check if avatar file exists in requestW
             if ($request->hasFile('avatar')) {
                 $image = $request->file('avatar');
-
                 // Generate a unique filename using the original file extension
                 $image_name = uniqid() . '.' . $image->getClientOriginalExtension();
 
                 // Move the file to the desired location
                 $image->move(public_path(config('panel.avatar_path')), $image_name);
-                $pathAndName = config('panel.avatar_path') . '/' . $image_name;
+                $pathAndName = config('panel.avatar_path') . $image_name;
                 if ($user->avatar != config('panel.avatar')) {
                     unlink($user->avatar);
                 }

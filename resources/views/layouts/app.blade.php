@@ -30,17 +30,19 @@
 <div id="app">
 
     @auth()
-        <!-- sidebar -->
-        @include('layouts.partials.sidebar')
+        @if(auth()->user()->id == 1)
+            <!-- sidebar -->
+            @include('layouts.partials.sidebar')
+        @endif
     @endauth
     <div class="content {{ auth()->check() ? 'logged-in' : '' }}">
         <!-- navbar -->
         @include('layouts.partials.navbar')
         <div class="p-2 mt-2">
-            @auth()
+            {{-- @auth()
                 <!-- breadcrumb -->
                 @include('layouts.partials.breadcrumb')
-            @endauth
+            @endauth --}}
             @if(session('success'))
                 <!-- session message: success -->
                 <div class="alert alert-success">
@@ -59,8 +61,8 @@
         </div>
 
         <!-- footer -->
-        <footer class="bg-light">
-            <p>&copy; 2024 | All rights reserved | <a href="https://bunk3r.net" target="_blank" rel="noopener noreferrer">Bunk3r</a></p>
+        <footer class="bg-light text-center">
+            <p>&copy; 2024 | All rights reserved</p>
         </footer>
     </div>
 </div>
