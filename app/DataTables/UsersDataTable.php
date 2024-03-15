@@ -77,9 +77,9 @@ class UsersDataTable extends DataTable
         ];
 
         // Check if the user has permission to create users
-        if (auth()->user()->can('user_create')) {
-            $buttons[] = Button::make('add')->attr(['class' => 'btn btn-primary']);
-        }
+        // if (auth()->user()->can('user_create')) {
+        //     $buttons[] = Button::make('add')->attr(['class' => 'btn btn-primary']);
+        // }
 
 
 

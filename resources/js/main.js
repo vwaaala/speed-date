@@ -12,7 +12,7 @@ $(function () {
     let container = document.querySelector(".content");
 
     // Check if the sidebar toggle button element exists
-    if (sidebarToggle) {
+    if (sidebarToggle && sidebar) {
         // Check if the window width is greater than 767 pixels
         if (window.outerWidth > 767) {
             // Add 'active-sidebar' class to the sidebar element

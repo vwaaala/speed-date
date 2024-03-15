@@ -51,8 +51,7 @@
                                         <div class="col-10">
                                             <input type="file"
                                                    class="form-control image @error('avatar') is-invalid @enderror"
-                                                   id="avatar">
-                                            <input type="hidden" name="avatar">
+                                                   id="avatar" name="avatar">
                                             <img src="" style="width: 200px;display: none;" class="show-image">
                                             @error('avatar')
                                             <div class="invalid-feedback">{{ $message }}</div>

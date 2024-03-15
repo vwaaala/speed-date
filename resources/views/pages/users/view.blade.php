@@ -13,8 +13,8 @@
         <div class="card-body">
             <div class="row">
                 <!-- Profile Photo -->
-                <div class="col-md-3">
-                    <img src="{{ asset($user->avatar) }}" class="img-fluid rounded" alt="Your Profile Photo">
+                <div class="col-md-3 d-flex align-items-center justify-content-center">
+                    <img src="{{ asset($user->avatar) }}" class="img-fluid rounded" style="height:200px" alt="Your Profile Photo">
                 </div>
 
                 <!-- Name and Email -->

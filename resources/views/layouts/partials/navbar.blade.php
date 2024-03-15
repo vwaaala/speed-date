@@ -8,7 +8,9 @@
                     style="max-height: 35px;">
             </a>
         @else
-            <a class="btn btn-primary border-0 sidebar-toggle"><i class="bi bi-bar-chart-steps"></i></a>
+            @if(auth()->user()->id == 1)
+                <a class="btn btn-primary border-0 sidebar-toggle"><i class="bi bi-bar-chart-steps"></i></a>
+            @endif
         @endguest
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -18,7 +20,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-end">
-                @if(count(config('panel.available_languages', [])) > 1)
+                {{-- @if(count(config('panel.available_languages', [])) > 1)
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
@@ -33,7 +35,7 @@
                             @endforeach
                         </ul>
                     </li>
-                @endif
+                @endif --}}
                 @guest
                     @if (Route::has('login'))
                         <li class="nav-item">
