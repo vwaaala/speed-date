@@ -1,9 +1,12 @@
+@php
+    use Bunker\LaravelSpeedDate\Enums\GenderEnum;
+@endphp
 @extends('layouts.app')
 @section('content')
 
     <div class="card p-4">
         <div class="row">
-            <div class="col-lg-6 col-md-12 col-12">
+            <div class="col-lg-6 col-md-12 col-12 mb-2">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">{{ __('global.edit') }} {{ __('pages.users.title_singular') }}</h5>
@@ -121,8 +124,105 @@
                     </div>
                 </div>
             </div>
+@if($user->id != 1)
+            <div class="col-lg-6 col-md-12 col-12 mb-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">{{ __('global.update') }} Bio</h5>
+                        <!-- Card title for updating password -->
+                    </div>
+                    <div class="card-body">
+                        <!-- Form for updating user's password -->
+                        <form method="POST" action="{{ route('users.updatebio', $user->id) }}">
+                            @method('PUT') <!-- Method spoofing to use PUT method -->
+                            @csrf <!-- CSRF protection -->
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <!-- Input field for user's nick name -->
+                                    <label for="nickname" class="form-label">Nick Name</label>
+                                    <input type="text" class="form-control"
+                                           id="nickname"
+                                           name="nickname" value="{{ $user->bio->nickname }}">
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <!-- Input field for user's last name -->
+                                    <label for="lastname" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control"
+                                           id="lastname"
+                                           name="lastname" value="{{ $user->bio->lastname }}">
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <!-- Input field for user's city -->
+                                    <label for="lastname" class="form-label">City</label>
+                                    <input type="text" class="form-control"
+                                           id="city"
+                                           name="city" value="{{ $user->bio->city }}">
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <!-- Input field for user's occupation -->
+                                    <label for="occupation" class="form-label">Occupation</label>
+                                    <input type="text" class="form-control"
+                                           id="occupation"
+                                           name="occupation" value="{{ $user->bio->occupation }}">
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <!-- Input field for user's phone -->
+                                    <label for="phone" class="form-label">Phone</label>
+                                    <input type="text" class="form-control"
+                                           id="phone"
+                                           name="phone" value="{{ $user->bio->phone }}">
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <!-- Input field for user's birthdate -->
+                                    <label for="birthdate" class="form-label">Birthdate</label>
+                                    <input type="text" class="form-control"
+                                           id="birthdate"
+                                           name="birthdate" value="{{ $user->bio->birthdate }}">
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <!-- Dropdown for selecting user's gender -->
+                                    <label for="gender" class="form-label">Gender <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select"
+                                            id="gender"
+                                            name="gender">
+                                        @foreach(GenderEnum::toArray() as $value)
+                                                <?php
+                                                $isSelected = ($user->bio->gender == $value) ? 'selected' : '';
+                                                ?>
+                                            <option
+                                                value="{{ $value }}" {{ $isSelected }}>{{ ucfirst($value) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <!-- Dropdown for selecting user's lookingfor -->
+                                    <label for="looking_for" class="form-label">Looking For <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select"
+                                            id="looking_for"
+                                            name="looking_for">
+                                        @foreach(GenderEnum::toArray() as $value)
+                                                <?php
+                                                $isSelected = ($user->bio->looking_for == $value) ? 'selected' : '';
+                                                ?>
+                                            <option
+                                                value="{{ $value }}" {{ $isSelected }}>{{ ucfirst($value) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
 
-            <div class="col-lg-6 col-md-12 col-12">
+                            <!-- Button to submit password update -->
+                            <button type="submit"
+                                    class="btn btn-primary">{{ __('global.update') }} Bio</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            @endif
+            <div class="col-lg-6 col-md-12 col-12 mb-2">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">{{ __('global.update') }} {{ __('pages.users.title_singular') }} {{ __('pages.users.fields.password') }}</h5>

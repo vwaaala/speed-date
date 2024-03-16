@@ -39,18 +39,57 @@
     </div>
     <div class="card p-4">
         <div class="row">
+            @if(auth()->user()->id != 1)
+            <div class="col-12">
+            @else
             <div class="col-5">
+            @endif
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-0">Participants</h4>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body table-responsive">
                         @if(isset($event->participants) && count($event->participants) > 0)
                             <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Name
+                                        </th>
+                                        <th>
+                                            Nick Name
+                                        </th>
+                                        <th>
+                                            Last Name
+                                        </th>
+                                        <th>
+                                            City
+                                        </th>
+                                        <th>
+                                            Occupation
+                                        </th>
+                                        <th>
+                                            Phone
+                                        </th>
+                                        <th>
+                                            Birthdate
+                                        </th>
+                                        <th>
+                                            Gender
+                                        </th>
+                                        <th>
+                                            Rating
+                                        </th>
+                                        <th>
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                 @foreach($event->participants as $item)
+                                {{-- {{dd($item->events->first()->eventRatings->first()->rating)}} --}}
                                     @if($item->id !== auth()->user()->id)
                                         <tr>
                                             <td>
@@ -69,6 +108,14 @@
                                                 </a>
 
                                             </td>
+                                            <td>{{ $item->bio->nickname }}</td>
+                                            <td>{{ $item->bio->lastname }}</td>
+                                            <td>{{ $item->bio->city }}</td>
+                                            <td>{{ $item->bio->occupation }}</td>
+                                            <td>{{ $item->bio->phone }}</td>
+                                            <td>{{ $item->bio->birthdate }}</td>
+                                            <td>{{ $item->bio->gender }}</td>
+                                            <td>{{ $item->events->first()->eventRatings->first()->rating }}</td>
                                             <td>
 
                                                 @if(auth()->user()->hasRole('User'))
@@ -81,12 +128,12 @@
                                                     @endphp
 
                                                     @can('sd_rating_create')
-                                                        @if(!$alreadyRated)
+                                                        {{-- @if(!$alreadyRated) --}}
                                                             <a href="#"
-                                                               class="btn btn-sm btn-outline-primary mr-2 rate-button"
+                                                               class="btn btn-sm btn-outline-primary mr-2 rate-button" style="width:100px;"
                                                                onclick="openRateModal('{{ $item->email }}', '{{ $event->id }}')"><i
                                                                     class="bi bi-activity"></i> Rate Now</a>
-                                                        @endif
+                                                        {{-- @endif --}}
                                                     @endcan
                                                 @else
                                                     @can('sd_rating_create')

@@ -88,27 +88,49 @@ class UserController extends Controller
             dd('hello');
 //            abort(403, 'You are not authorized');
         }
-        if ($user->update(['name' => $request->get('name'), 'status' => $request->get('status') != null ? $request->get('status') : $user->status])) {
-            // Check if avatar file exists in requestW
-            if ($request->hasFile('avatar')) {
-                $image = $request->file('avatar');
-                // Generate a unique filename using the original file extension
-                $image_name = uniqid() . '.' . $image->getClientOriginalExtension();
-
-                // Move the file to the desired location
-                $image->move(public_path(config('panel.avatar_path')), $image_name);
-                $pathAndName = config('panel.avatar_path') . $image_name;
-                if ($user->avatar != config('panel.avatar')) {
-                    unlink($user->avatar);
+        if(auth()->check()){
+            if ($user->update(['name' => $request->get('name'), 'status' => $request->get('status') != null ? $request->get('status') : $user->status])) {
+                // Check if avatar file exists in requestW
+                if ($request->hasFile('avatar')) {
+                    $image = $request->file('avatar');
+                    // Generate a unique filename using the original file extension
+                    $image_name = uniqid() . '.' . $image->getClientOriginalExtension();
+    
+                    // Move the file to the desired location
+                    $image->move(public_path(config('panel.avatar_path')), $image_name);
+                    $pathAndName = config('panel.avatar_path') . $image_name;
+                    if ($user->avatar != config('panel.avatar')) {
+                        unlink($user->avatar);
+                    }
+                    // Update user avatar
+                    $user->update(['avatar' => $pathAndName]);
+                } else {
+                    $user->update(['avatar' => config('panel.avatar')]);
                 }
-                // Update user avatar
-                $user->update(['avatar' => $pathAndName]);
-            } else {
-                $user->update(['avatar' => config('panel.avatar')]);
+                if(auth()->user()->id != 1){
+                    $eventid = $user->events->pluck('id')->first();
+                    return redirect()->route('speed_date.events.show', $eventid)->with('success', 'Profile updated successfully');
+                }
+                return redirect()->route('users.index')->with('success', 'User updated successfully');
             }
-            return redirect()->route('users.index')->with('success', 'User updated successfully');
         }
+        
         return redirect()->route('users.index')->with('error', 'Can not update user!');
+    }
+    public function updatebio(Request $request, $userid): RedirectResponse
+    {
+        $user = User::where('id', $userid)->first();
+        if(auth()->user()->hasRole('User') && auth()->user()->id != $user->id){
+            dd('Hello');
+//            abort(403, 'You are not authorized');
+        }
+        if ($user->bio->update(['nickname' => $request->get('nickname'), 'lastname' => $request->get('lastname'),'city' => $request->get('city'),'occupation' => $request->get('occupation'),'phone' => $request->get('phone'),'birthdate' => $request->get('birthdate'),'gender' => $request->get('gender'),'looking_for' => $request->get('looking_for')])) {
+            if(auth()->user()->hasRole('User')){
+                return redirect()->route('users.show', $user->id)->with('success', 'User Bio updated successfully');
+            }
+            return redirect()->route('users.index')->with('success', 'User Bio updated successfully');
+        }
+        return redirect()->route('users.index')->with('error', 'Can not update user bio!');
     }
 
     /**

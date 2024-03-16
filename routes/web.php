@@ -43,6 +43,7 @@ Route::middleware(['auth', 'web', 'redirectusertoevent'])->group(function () {
     Route::delete('users/{id}/force-delete', [App\Http\Controllers\UserController::class, 'forceDelete'])->name('users.forceDelete');
     Route::get('users/{id}/retrieve', [App\Http\Controllers\UserController::class, 'retrieveDeleted'])->name('users.retrieveDeleted');
     Route::put('users/{id}/change-password', [App\Http\Controllers\UserController::class, 'changePassword'])->name('users.changePassword');
+    Route::put('users/{id}/updatebio', [App\Http\Controllers\UserController::class, 'updatebio'])->name('users.updatebio');
 
     // Define resourceful routes for users and roles
     Route::resources(['users' => UserController::class, 'roles' => RoleController::class,]);

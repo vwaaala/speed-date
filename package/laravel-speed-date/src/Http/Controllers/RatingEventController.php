@@ -39,12 +39,24 @@ class RatingEventController extends Controller
         ]);
         $userTo = User::where('email', $request->get('user_email'))->first();
         // Create new rating
-        RatingEvent::create([
+        $ratingEvent = RatingEvent::where([
             'user_id_from' => auth()->id(),
             'user_id_to' => $userTo->id,
-            'event_id' => $request->event_id, // Make sure to get event ID if needed
-            'rating' => $request->rating
-        ]);
+            'event_id' => $request->event_id,
+        ])->first();
+        
+        if ($ratingEvent) {
+            // If the record already exists, update it with the new rating
+            $ratingEvent->update(['rating' => $request->rating]);
+        } else {
+            // If the record doesn't exist, create a new one
+            RatingEvent::create([
+                'user_id_from' => auth()->id(),
+                'user_id_to' => $userTo->id,
+                'event_id' => $request->event_id,
+                'rating' => $request->rating
+            ]);
+        }
 
         return redirect()->back()->with('success', "Saved ratings successfully");
     }
