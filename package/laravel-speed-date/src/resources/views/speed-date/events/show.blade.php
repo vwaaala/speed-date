@@ -115,7 +115,7 @@
                                             <td>{{ $item->bio->phone }}</td>
                                             <td>{{ $item->bio->birthdate }}</td>
                                             <td>{{ $item->bio->gender }}</td>
-                                            <td>{{ $item->events->first()->eventRatings->first()->rating }}</td>
+                                            <td>{{ $item->events->first()->eventRatings->first()->rating ?? 'No Rating Yet' }}</td>
                                             <td>
 
                                                 @if(auth()->user()->hasRole('User'))
