@@ -13,13 +13,16 @@ class CheckAvatarMiddleware
         // Check if the user is authenticated
         if (auth()->check()) {
             $user = auth()->user();
+            if($user->id == 1){
 
-            // Check if the user's avatar matches the default
-            if ($user->avatar == Config::get('panel.avatar')) {
-                // If the avatar matches the default, allow access to users.edit and users.update routes
-                if (!$request->routeIs('users.update') && !$request->routeIs('users.edit')) {
-                    // Redirect to the users.edit page with an error message
-                    return redirect()->route('users.edit', $user->id)->with('error', 'Please change your profile photo.');
+            } else {
+                // Check if the user's avatar matches the default
+                if ($user->avatar == Config::get('panel.avatar')) {
+                    // If the avatar matches the default, allow access to users.edit and users.update routes
+                    if (!$request->routeIs('users.update') && !$request->routeIs('users.edit')) {
+                        // Redirect to the users.edit page with an error message
+                        return redirect()->route('users.edit', $user->id)->with('error', 'Please change your profile photo.');
+                    }
                 }
             }
         } else {

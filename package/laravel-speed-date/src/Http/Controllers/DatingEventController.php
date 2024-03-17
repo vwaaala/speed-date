@@ -168,4 +168,27 @@ class DatingEventController extends Controller
 
         return redirect()->back()->with('success', 'Removed participant successfully.');
     }
+    function finalizeEvent($eventId)
+    {
+        // Get all participants of the event
+        $participants = DatingEvent::findOrFail($eventId)->matchedParticipants;
+
+        foreach ($participants as $participant) {
+            // Get all other participants except the current one
+            $otherParticipants = $participants->except($participant->id);
+
+            // Check if the participant has rated all other participants
+            $ratingsCount = RatingEvent::where('user_id_from', $participant->id)
+                ->whereIn('user_id_to', $otherParticipants->pluck('id'))
+                ->where('event_id', $eventId)
+                ->count();
+
+            // Check if the count of ratings matches the count of other participants
+            if ($ratingsCount !== $otherParticipants->count()) {
+                return redirect()->route('speed_date.events.index')->with('error', 'Vote is not finished yet.');
+            }
+        }
+
+        return redirect()->route('speed_date.events.index')->with('success', 'Vote completed and notifications sent.');
+    }
 }

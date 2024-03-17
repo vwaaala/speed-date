@@ -28,7 +28,7 @@ Route::get('/', function () {
 Auth::routes(['verify' => false, 'register' => false]);
 
 // Group routes that require authentication middleware
-Route::middleware(['auth', 'web', 'redirectusertoevent'])->group(function () {
+Route::middleware(['auth', 'web', 'redirectusertoevent', 'check.avatar'])->group(function () {
 
     // Defining route for the home page after authentication
     // Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
