@@ -22,6 +22,30 @@ class UsersDataTable extends DataTable
             return $user->created_at->format("m/d/Y");
         })->editColumn('updated_at', function ($user){
             return $user->updated_at->format("m/d/Y");
+        })
+        ->addColumn('nickname', function ($user) {
+            return optional($user->bio)->nickname;
+        })
+        ->addColumn('lastname', function ($user) {
+            return optional($user->bio)->lastname;
+        })
+        ->addColumn('city', function ($user) {
+            return optional($user->bio)->city;
+        })
+        ->addColumn('occupation', function ($user) {
+            return optional($user->bio)->occupation;
+        })
+        ->addColumn('phone', function ($user) {
+            return optional($user->bio)->phone;
+        })
+        ->addColumn('birthdate', function ($user) {
+            return optional($user->bio)->birthdate;
+        })
+        ->addColumn('gender', function ($user) {
+            return optional($user->bio)->gender;
+        })
+        ->addColumn('looking_for', function ($user) {
+            return optional($user->bio)->looking_for;
         })->addColumn('action', 'pages.users.action'); // Add a column for actions using the 'users.action' view
     }
 
@@ -104,6 +128,14 @@ class UsersDataTable extends DataTable
             Column::make('status'), // Column for 'status'
             Column::make('created_at'), // Column for 'created_at'
             Column::make('updated_at'), // Column for 'updated_at'
+            Column::make('nickname'),
+            Column::make('lastname'),
+            Column::make('city'),
+            Column::make('occupation'),
+            Column::make('phone'),
+            Column::make('birthdate'),
+            Column::make('gender'),
+            Column::make('looking_for'),
             Column::computed('action') // Column for actions
             ->exportable(false)
                 ->printable(false)

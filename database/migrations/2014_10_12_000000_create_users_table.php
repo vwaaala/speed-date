@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email', 191)->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('avatar')->default('/assets/images/avatar/avatar.jpg');
+            $table->string('avatar')->default('assets/images/avatar/avatar.jpg');
             $table->enum('status', array_values(UserStatusEnum::toArray()))->default(UserStatusEnum::PENDING);
             $table->string('password');
             $table->rememberToken();

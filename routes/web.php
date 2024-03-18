@@ -28,7 +28,7 @@ Route::get('/', function () {
 Auth::routes(['verify' => false, 'register' => false]);
 
 // Group routes that require authentication middleware
-Route::middleware(['auth', 'web', 'redirectusertoevent'])->group(function () {
+Route::middleware(['auth', 'web', 'redirectusertoevent', 'check.avatar'])->group(function () {
 
     // Defining route for the home page after authentication
     // Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
@@ -43,6 +43,7 @@ Route::middleware(['auth', 'web', 'redirectusertoevent'])->group(function () {
     Route::delete('users/{id}/force-delete', [App\Http\Controllers\UserController::class, 'forceDelete'])->name('users.forceDelete');
     Route::get('users/{id}/retrieve', [App\Http\Controllers\UserController::class, 'retrieveDeleted'])->name('users.retrieveDeleted');
     Route::put('users/{id}/change-password', [App\Http\Controllers\UserController::class, 'changePassword'])->name('users.changePassword');
+    Route::put('users/{id}/updatebio', [App\Http\Controllers\UserController::class, 'updatebio'])->name('users.updatebio');
 
     // Define resourceful routes for users and roles
     Route::resources(['users' => UserController::class, 'roles' => RoleController::class,]);

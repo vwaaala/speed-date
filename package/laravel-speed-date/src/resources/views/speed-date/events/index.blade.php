@@ -71,6 +71,10 @@
                                            class="btn btn-warning btn-sm">
                                             <i class="bi bi-pencil"></i>
                                         </a>
+                                        <a href="{{ route('speed_date.events.finalizeEvent', $value->id) }}"
+                                            class="btn btn-primary btn-sm">
+                                             <i class="bi bi-check-circle-fill"></i>
+                                         </a>
                                     @endcan
                                     @can('sd_event_delete')
                                         <a href="#"

@@ -5,9 +5,13 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <span>{{ __('global.profile') }}</span>
+                <a href="{{ route('speed_date.events.index') }}" class="btn btn-warning">Event</a>
+                @if($user->id == auth()->user()->id)
                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning"><span
                         class="bi bi-pencil"></span> </a>
+                @endif
             </div>
+
         </div>
 
         <div class="card-body">
@@ -26,7 +30,10 @@
                     <p><strong><i class="bi bi-envelope-check"></i></strong> {{ $user->email }}</p>
                     <!-- Bio -->
                     @if($user->bio)
-                        <p><strong>Bio:</strong> {{ $user->bio->nickname }} - {{ $user->bio->city }} - {{ $user->bio->occupation }}</p>
+                        <p><strong>Last Name:</strong> {{ $user->bio->lastname }}</p>
+                        <p><strong>Nick Name:</strong> {{ $user->bio->nickname }}</p>
+                        <p><strong>City:</strong> {{ $user->bio->city }}</p>
+                        <p><strong>Occupation:</strong> {{ $user->bio->occupation }}</p>
                         <p><strong>Phone:</strong> {{ $user->bio->phone }}</p>
                         <p><strong>Birthdate:</strong> {{ $user->bio->birthdate }}</p>
                         <p><strong>Gender:</strong> {{ $user->bio->gender }}</p>

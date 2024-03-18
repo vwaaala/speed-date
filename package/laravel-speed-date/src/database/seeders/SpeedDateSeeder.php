@@ -43,6 +43,7 @@ class SpeedDateSeeder extends Seeder
         UserBio::create([
             'user_id'  => 2,
             'nickname'=> 'JDoe',
+            'lastname'=> 'JDoe Last',
             'city' => 'New York',
             'occupation' => 'Web Designer',
             'phone' => '1234567890',

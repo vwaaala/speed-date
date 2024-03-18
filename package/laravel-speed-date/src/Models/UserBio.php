@@ -14,6 +14,7 @@ class UserBio extends Model
     protected $fillable = [
         'user_id',
         'nickname',
+        'lastname',
         'city',
         'occupation',
         'phone',

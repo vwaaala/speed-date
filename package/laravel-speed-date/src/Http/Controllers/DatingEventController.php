@@ -112,7 +112,7 @@ class DatingEventController extends Controller
                 // Read each line of the file
                 while (($data = fgetcsv($handle)) !== false) {
                     // Extract data from the CSV row
-                    list($name, $email, $password, $nickname, $city, $occupation, $phone, $birthdate, $gender, $looking_for) = $data;
+                    list($name, $email, $password, $nickname, $lastname, $city, $occupation, $phone, $birthdate, $gender, $looking_for) = $data;
 
                     // Check if the user with this email already exists
                     $existingUser = User::where('email', $email)->first();
@@ -120,12 +120,12 @@ class DatingEventController extends Controller
                     if ($existingUser) {
                         // Update user details
                         $existingUser->update(['name' => $name, 'password' => bcrypt($password)]);
-                        $existingUser->bio->update(['nickname' => $nickname, 'city' => $city, 'occupation' => $occupation, 'phone' => $phone, 'birthdate' => $birthdate, 'gender' => $gender, 'looking_for' => $looking_for]);
+                        $existingUser->bio->update(['nickname' => $nickname, 'lastname' => $lastname, 'city' => $city, 'occupation' => $occupation, 'phone' => $phone, 'birthdate' => $birthdate, 'gender' => $gender, 'looking_for' => $looking_for]);
                         $event->participants()->syncWithoutDetaching($existingUser->id);
                     } else {
                         // Create a new user
                         $newUser = User::create(['uuid' => str()->uuid(), 'name' => $name, 'email' => $email, 'password' => bcrypt($password)]);
-                        UserBio::create(['user_id' => $newUser->id, 'nickname' => $nickname, 'city' => $city, 'occupation' => $occupation, 'phone' => $phone, 'birthdate' => $birthdate, 'gender' => $gender, 'looking_for' => $looking_for]);
+                        UserBio::create(['user_id' => $newUser->id, 'nickname' => $nickname, 'lastname' => $lastname, 'city' => $city, 'occupation' => $occupation, 'phone' => $phone, 'birthdate' => $birthdate, 'gender' => $gender, 'looking_for' => $looking_for]);
                         $event->participants()->syncWithoutDetaching($newUser->id);
                         $newUser->assignRole('User');
                     }
@@ -167,5 +167,28 @@ class DatingEventController extends Controller
         $event->participants()->detach($userId);
 
         return redirect()->back()->with('success', 'Removed participant successfully.');
+    }
+    function finalizeEvent($eventId)
+    {
+        // Get all participants of the event
+        $participants = DatingEvent::findOrFail($eventId)->matchedParticipants;
+
+        foreach ($participants as $participant) {
+            // Get all other participants except the current one
+            $otherParticipants = $participants->except($participant->id);
+
+            // Check if the participant has rated all other participants
+            $ratingsCount = RatingEvent::where('user_id_from', $participant->id)
+                ->whereIn('user_id_to', $otherParticipants->pluck('id'))
+                ->where('event_id', $eventId)
+                ->count();
+
+            // Check if the count of ratings matches the count of other participants
+            if ($ratingsCount !== $otherParticipants->count()) {
+                return redirect()->route('speed_date.events.index')->with('error', 'Vote is not finished yet.');
+            }
+        }
+
+        return redirect()->route('speed_date.events.index')->with('success', 'Vote completed and notifications sent.');
     }
 }

@@ -39,18 +39,59 @@
     </div>
     <div class="card p-4">
         <div class="row">
-            <div class="col-5">
+            
+            <div class="col-12 mb-2">
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-0">Participants</h4>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body table-responsive">
                         @if(isset($event->participants) && count($event->participants) > 0)
                             <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Name
+                                        </th>
+                                        <th>
+                                            Nick Name
+                                        </th>
+                                        @if(auth()->user()->id == 1)
+                                        <th>
+                                            Last Name
+                                        </th>
+                                        <th>
+                                            Phone
+                                        </th>
+                                        <th>
+                                            City
+                                        </th>
+                                        @endif
+                                        <th>
+                                            Occupation
+                                        </th>
+                                        <th>
+                                            Birthdate
+                                        </th>
+                                        <th>
+                                            Gender
+                                        </th>
+                                        <th>
+                                            Looking For
+                                        </th>
+                                        <th>
+                                            Rating
+                                        </th>
+                                        <th>
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
                                 <tbody>
-                                @foreach($event->participants as $item)
+                                @foreach($event->matchedParticipants as $item)
+                                {{-- {{dd($item->events->first()->eventRatings->first()->rating)}} --}}
                                     @if($item->id !== auth()->user()->id)
                                         <tr>
                                             <td>
@@ -69,6 +110,28 @@
                                                 </a>
 
                                             </td>
+                                            <td>{{ $item->bio->nickname }}</td>
+
+                                        @if(auth()->user()->id == 1)
+                                            <td>{{ $item->bio->lastname }}</td>
+                                            <td>{{ $item->bio->phone }}</td>
+                                            <td>{{ $item->bio->city }}</td>
+                                            @endif
+                                            <td>{{ $item->bio->occupation }}</td>
+                                            <td>{{ $item->bio->birthdate }}</td>
+                                            <td>{{ $item->bio->gender }}</td>
+                                            <td>{{ $item->bio->looking_for }}</td>
+                                            <td>
+                                                @if(auth()->user()->id == 1)
+                                                    {{$event->getEventRatingForUser($event->id)}}
+                                                @else
+                                                {{ RatingEvent::where([
+                                                    ['user_id_from', auth()->user()->id],
+                                                    ['user_id_to', $item->id],
+                                                    ['event_id', $event->id]
+                                                    ])->first()->rating ?? 'No Rating Yet' }}
+                                                @endif
+                                            </td>
                                             <td>
 
                                                 @if(auth()->user()->hasRole('User'))
@@ -81,12 +144,12 @@
                                                     @endphp
 
                                                     @can('sd_rating_create')
-                                                        @if(!$alreadyRated)
+                                                        {{-- @if(!$alreadyRated) --}}
                                                             <a href="#"
-                                                               class="btn btn-sm btn-outline-primary mr-2 rate-button"
+                                                               class="btn btn-sm btn-outline-primary mr-2 rate-button" style="width:100px;"
                                                                onclick="openRateModal('{{ $item->email }}', '{{ $event->id }}')"><i
                                                                     class="bi bi-activity"></i> Rate Now</a>
-                                                        @endif
+                                                        {{-- @endif --}}
                                                     @endcan
                                                 @else
                                                     @can('sd_rating_create')
@@ -111,7 +174,7 @@
                 </div>
             </div>
             @can('sd_rating_show')
-                <div class="col-7">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
@@ -129,9 +192,37 @@
                             <tbody>
                             @foreach ($event->eventRatings as $rating)
                                 <tr>
-                                    <td>{{ $rating->userFrom->name }}</td>
+                                    <td>
+                                        <a href="{{ route('users.show', $rating->userFrom->id) }}"
+                                            style="text-decoration: underline; color: #007bff; text-decoration-color: #007bff;">
+                                             <div class="d-flex align-items-center">
+                                                 <div class="rounded-circle overflow-hidden mr-2"
+                                                      style="width: 40px; height: 40px;">
+                                                     <img src="{{ asset($rating->userFrom->avatar) }}"
+                                                          alt="{{ $rating->userFrom->name }}"
+                                                          class="w-100 h-100">
+                                                 </div>
+                                                 <span class="ml-2"
+                                                       style="margin-left: 8px !important;">{{ $rating->userFrom->name }}</span>
+                                             </div>
+                                         </a>
+                                    </td>
                                     <td>{{ $rating->rating }}</td>
-                                    <td>{{ $rating->userTo->name }}</td>
+                                    <td>
+                                        <a href="{{ route('users.show', $rating->userTo->id) }}"
+                                            style="text-decoration: underline; color: #007bff; text-decoration-color: #007bff;">
+                                             <div class="d-flex align-items-center">
+                                                 <div class="rounded-circle overflow-hidden mr-2"
+                                                      style="width: 40px; height: 40px;">
+                                                     <img src="{{ asset($rating->userTo->avatar) }}"
+                                                          alt="{{ $rating->userTo->name }}"
+                                                          class="w-100 h-100">
+                                                 </div>
+                                                 <span class="ml-2"
+                                                       style="margin-left: 8px !important;">{{ $rating->userTo->name }}</span>
+                                             </div>
+                                         </a>
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>

@@ -174,6 +174,7 @@ CREATE TABLE `user_bio` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint unsigned NOT NULL,
   `nickname` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lastname` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `city` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `occupation` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `phone` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -287,9 +288,9 @@ INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VAL
 (1, 'Super Admin', 'web', '2024-03-15 14:16:11', '2024-03-15 14:16:11'),
 (2, 'User', 'web', '2024-03-15 14:16:11', '2024-03-15 14:16:11');
 
-INSERT INTO `user_bio` (`id`, `user_id`, `nickname`, `city`, `occupation`, `phone`, `birthdate`, `gender`, `looking_for`, `created_at`, `updated_at`) VALUES
-(1, 2, 'JDoe', 'New York', 'Software Engineer', '1234567890', '1988-12-13', 'male', 'female', '2024-03-15 14:16:12', '2024-03-15 14:17:30'),
-(2, 3, 'JDoe', 'New York', 'Web Designer', '1234567890', '1988-12-13', 'female', 'male', '2024-03-15 14:17:30', '2024-03-15 14:17:30');
+INSERT INTO `user_bio` (`id`, `user_id`, `nickname`, `lastname` `city`, `occupation`, `phone`, `birthdate`, `gender`, `looking_for`, `created_at`, `updated_at`) VALUES
+(1, 2, 'JDoe', 'JDoe Last', 'New York', 'Software Engineer', '1234567890', '1988-12-13', 'male', 'female', '2024-03-15 14:16:12', '2024-03-15 14:17:30'),
+(2, 3, 'JDoe2', 'JDoe2 Last', 'New York', 'Web Designer', '1234567890', '1988-12-13', 'female', 'male', '2024-03-15 14:17:30', '2024-03-15 14:17:30');
 
 INSERT INTO `users` (`id`, `uuid`, `name`, `email`, `email_verified_at`, `avatar`, `status`, `password`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, '8a7ac52e-78c6-4785-970c-8bdbae715c80', 'Oliver Brown', 'super@bunk3r.net', NULL, 'assets/images/avatar/avatar.jpg', 'pending', '$2y$12$7XqCtm4tJcUzQV3u1EyGgeFJUX2fXXplvpkCXe0GgrV52CeCWg7fu', NULL, '2024-03-15 14:16:11', '2024-03-15 14:16:11', NULL),

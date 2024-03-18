@@ -70,7 +70,7 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'redirectusertoevent' => \App\Http\Middleware\RedirectUserToEvent::class,
-//        'check.avatar' => \App\Http\Middleware\CheckAvatarMiddleware::class,
+       'check.avatar' => \App\Http\Middleware\CheckAvatarMiddleware::class,
 
     ];
 }
