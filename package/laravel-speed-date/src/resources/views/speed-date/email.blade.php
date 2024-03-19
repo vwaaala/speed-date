@@ -36,7 +36,8 @@
 <body>
     <div style="padding: 20px;">
         <h1>Hello, {{ $participant->name }}!</h1>
-        <p>Below is the result of evnt: {{ $participant->events->first()->name }}</p>
+        <p>Event Name: {{ $participant->events->first()->name }} </p>
+        <p>Event Date: {{ $participant->events->first()->happens_on->format('F j, Y h:i A') }} </p>
         <div style="overflow-x:auto;">
             <table>
                 <thead>
@@ -57,20 +58,20 @@
                 <tbody>
                     @foreach ($users as $user)
                         <tr>
-                            <td>
-                                <a href="{{ route('users.show', $user->id) }}"
+                            <td>{{ $user->name }}
+                                {{-- <a href="{{ route('users.show', $user->id) }}"
                                     style="text-decoration: underline; color: #007bff; text-decoration-color: #007bff;">
                                      <div class="d-flex align-items-center">
-                                         {{-- <div class="rounded-circle overflow-hidden mr-2"
+                                         <div class="rounded-circle overflow-hidden mr-2"
                                               style="width: 40px; height: 40px;">
                                              <img src="{{ asset($user->avatar) }}"
                                                   alt="{{ $user->name }}"
                                                   class="w-100 h-100">
-                                         </div> --}}
+                                         </div>
                                          <span class="ml-2"
                                                style="margin-left: 8px !important;">{{ $user->name }}</span>
                                      </div>
-                                 </a>
+                                 </a> --}}
                             </td>
                             <td>{{ $user->bio->nickname }}</td>
                             <td>{{ $user->bio->lastname }}</td>
