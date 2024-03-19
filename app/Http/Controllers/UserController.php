@@ -6,6 +6,7 @@ use App\DataTables\UsersDataTable;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -100,7 +101,11 @@ class UserController extends Controller
                     $image->move(public_path(config('panel.avatar_path')), $image_name);
                     $pathAndName = config('panel.avatar_path') . $image_name;
                     if ($user->avatar != config('panel.avatar')) {
-                        unlink($user->avatar);
+                        try {
+                            unlink($user->avatar);
+                        } catch (Exception $e){
+
+                        }
                     }
                     // Update user avatar
                     $user->update(['avatar' => $pathAndName]);
@@ -180,7 +185,11 @@ class UserController extends Controller
             if ($restoreUser->forceDelete()) {
                 // If user had an avatar, delete its file
                 if ($avatar != config('panel.avatar')) {
-                    unlink(public_path($avatar));
+                    try {
+                        unlink(public_path($avatar));
+                    } catch (Exception $e){
+                        
+                    }
                 }
                 return redirect()->route('users.index')->with('success', 'User deleted successfully!');
             }

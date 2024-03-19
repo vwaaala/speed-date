@@ -12,7 +12,6 @@ use ReflectionClass;
 class GenderEnum
 {
     // Constants representing user statuses
-    const BOTH = 'both';
     const FEMALE = 'female';
     const MALE = 'male';
 

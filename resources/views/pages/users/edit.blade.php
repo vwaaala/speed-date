@@ -227,9 +227,6 @@
                                 name="gender">
                             @foreach(GenderEnum::toArray() as $value)
                                     @php
-                                    if($value == GenderEnum::BOTH){
-                                        continue;
-                                    }
                                     $isSelected = ($user->bio->gender == $value) ? 'selected' : '';
                                     @endphp
                                 <option

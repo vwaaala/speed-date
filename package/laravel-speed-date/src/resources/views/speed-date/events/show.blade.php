@@ -26,7 +26,7 @@
                     <td>{{ $event->name }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Date and Time:</th>
+                    <th scope="row">Event Date:</th>
                     <td>{{ $event->happens_on->format('F j, Y h:i A') }}</td>
                 </tr>
                 <tr>

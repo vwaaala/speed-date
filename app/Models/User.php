@@ -14,6 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Bunker\LaravelSpeedDate\Models\UserBio;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Builder;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -65,6 +66,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(DatingEvent::class, 'event_users', 'user_id', 'event_id');
     }
 
+    public function getEvent($eventId)
+    {
+        return $this->events->where('id',$eventId)->first();
+    }
+
     public function eventRatingsGiven()
     {
         return $this->hasMany(RatingEvent::class, 'user_id_from');
@@ -73,5 +79,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function eventRatingsReceived()
     {
         return $this->hasMany(RatingEvent::class, 'user_id_to');
+    }
+    public function getValidRatingsForEvent($eventId)
+    {
+        return $this->getEvent($eventId)->matchedParticipants()
+            ->where('users.id', '!=', $this->id) // Specify the users table alias
+            ->whereHas('eventRatingsGiven', function (Builder $query) use ($eventId) {
+                $query->where('event_ratings.event_id', $eventId) // Specify the event_ratings table alias
+                    ->where('event_ratings.rating', '!=', 'no');
+            })
+            ->whereHas('eventRatingsReceived', function (Builder $query) use ($eventId) {
+                $query->where('event_ratings.event_id', $eventId) // Specify the event_ratings table alias
+                    ->where('event_ratings.rating', '!=', 'no');
+            })
+            ->with(['eventRatingsGiven', 'eventRatingsReceived'])
+            ->get();
     }
 }

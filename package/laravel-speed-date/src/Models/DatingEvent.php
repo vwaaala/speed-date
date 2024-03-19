@@ -3,6 +3,8 @@
 namespace Bunker\LaravelSpeedDate\Models;
 
 use App\Models\User;
+use Bunker\LaravelSpeedDate\Enums\EventTypeEnum;
+use Bunker\LaravelSpeedDate\Enums\GenderEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -35,11 +37,20 @@ class DatingEvent extends Model
             return $this->belongsToMany(User::class, 'event_users', 'event_id', 'user_id');
         }
         return $this->participants()->whereHas('bio', function ($query) use ($authUser) {
-            $query->whereIn('looking_for', [$authUser->bio->gender, 'both']);
-            
-            if ($authUser->bio->looking_for !== 'both') {
-                $query->where('gender', $authUser->bio->looking_for);
+            if($authUser->events->first()->type == EventTypeEnum::STRAIGHT){
+                if($authUser->bio->gender == GenderEnum::MALE){
+                    $query->where('gender', GenderEnum::FEMALE);
+                } else {
+                    $query->where('gender', GenderEnum::MALE);
+                }
+            } else {
+                if($authUser->bio->gender == GenderEnum::MALE){
+                    $query->where('gender', GenderEnum::MALE);
+                } else {
+                    $query->where('gender', GenderEnum::FEMALE);
+                }
             }
+            
         });
     }
 
