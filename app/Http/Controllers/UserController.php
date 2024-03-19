@@ -143,7 +143,7 @@ class UserController extends Controller
      */
     public function show(User $user): Factory|\Illuminate\Foundation\Application|View|Application|RedirectResponse
     {
-        if (auth()->user()->hasPermissionTo('user_show') || (auth()->user()->hasPermissionTo('user_access') && auth()->user()->id == $user->id)) {
+        if ((auth()->user()->id == 1 || (auth()->user()->id != 1  && auth()->user()->id != $user->id && auth()->user()->canSee($user->id)) || auth()->user()->id == $user->id)) {
             return view('pages.users.view', compact('user'));
         }
         return redirect()->back()->with('error', 'You are not authorized to view the user');
@@ -154,6 +154,9 @@ class UserController extends Controller
      */
     public function edit(User $user): View|\Illuminate\Foundation\Application|Factory|Application
     {
+        if(auth()->user()->id != 1 && auth()->user()->id != $user->id && auth()->user()->canSee($user->id) == false){
+            abort('403', 'Access Forbidden!');
+        }
         if (auth()->user()->hasRole('Super Admin')) {
             $roles = Role::all()->pluck('name');
         } else {
@@ -219,6 +222,10 @@ class UserController extends Controller
             return redirect()->route('users.show', $user->id)->with('success', 'Password changed successfully.');
         }
         return redirect()->route('users.show', $user->id)->with('error', 'Password can not be changed.');
+    }
+
+    public function isUserInEvent(User $user){
+
     }
 
 }

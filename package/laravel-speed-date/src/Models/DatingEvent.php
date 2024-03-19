@@ -42,7 +42,7 @@ class DatingEvent extends Model
                     $query->where('gender', GenderEnum::FEMALE);
                 } else {
                     $query->where('gender', GenderEnum::MALE);
-                }
+                } 
             } else {
                 if($authUser->bio->gender == GenderEnum::MALE){
                     $query->where('gender', GenderEnum::MALE);
@@ -82,7 +82,7 @@ class DatingEvent extends Model
         }
         
 
-        return 'Vote completed';
+        return 'Done';
     }
 
 }

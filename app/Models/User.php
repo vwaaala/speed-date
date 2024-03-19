@@ -95,4 +95,13 @@ class User extends Authenticatable implements MustVerifyEmail
             ->with(['eventRatingsGiven', 'eventRatingsReceived'])
             ->get();
     }
+    public function canSee($otheruserid){
+        $otheruser = $this->where('id', $otheruserid)->first();
+        $user = auth()->user();
+
+        if($user->events->first()->id == $otheruser->events->first()->id ){
+            return true;
+        }
+        return false;
+    }
 }

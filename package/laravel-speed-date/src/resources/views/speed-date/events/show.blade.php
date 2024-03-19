@@ -59,18 +59,18 @@
                                             Nick Name
                                         </th>
                                         @if(auth()->user()->id == 1)
-                                        <th>
-                                            Last Name
-                                        </th>
-                                        <th>
-                                            Email
-                                        </th>
-                                        <th>
-                                            Phone
-                                        </th>
-                                        <th>
-                                            City
-                                        </th>
+                                            <th>
+                                                Last Name
+                                            </th>
+                                            <th>
+                                                Email
+                                            </th>
+                                            <th>
+                                                Phone
+                                            </th>
+                                            <th>
+                                                City
+                                            </th>
                                         @endif
                                         <th>
                                             Occupation
@@ -85,7 +85,12 @@
                                             Looking For
                                         </th>
                                         <th>
-                                            Rating
+                                            @if(auth()->user()->id == 1)
+                                                Vote Status
+                                            @else
+                                                Rating
+                                            @endif
+                                            
                                         </th>
                                         <th>
                                             Action
