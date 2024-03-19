@@ -63,6 +63,9 @@
                                             Last Name
                                         </th>
                                         <th>
+                                            Email
+                                        </th>
+                                        <th>
                                             Phone
                                         </th>
                                         <th>
@@ -114,6 +117,7 @@
 
                                         @if(auth()->user()->id == 1)
                                             <td>{{ $item->bio->lastname }}</td>
+                                            <td>{{ $item->email }}</td>
                                             <td>{{ $item->bio->phone }}</td>
                                             <td>{{ $item->bio->city }}</td>
                                             @endif

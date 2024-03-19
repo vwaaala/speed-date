@@ -31,6 +31,13 @@
         th {
             background-color: #f2f2f2;
         }
+                /* Make table responsive */
+        @media screen and (max-width: 600px) {
+            th, td {
+                display: block;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
