@@ -31,17 +31,17 @@
                     <!-- Email with Mail Icon -->
                     <p><strong><i class="bi bi-envelope-check"></i></strong> {{ $user->email }}</p>
                         @if($user->bio)
-                            <p><strong>Last Name:</strong> {{ $user->bio->lastname }}</p>
-                            <p><strong>Nick Name:</strong> {{ $user->bio->nickname }}</p>
-                            <p><strong>City:</strong> {{ $user->bio->city }}</p>
-                            <p><strong>Occupation:</strong> {{ $user->bio->occupation }}</p>
                             <p><strong>Phone:</strong> {{ $user->bio->phone }}</p>
-                            <p><strong>Birthdate:</strong> {{ $user->bio->birthdate }}</p>
                         @endif
                     @endif
 
                     <!-- Bio -->
                     @if($user->bio)
+                        <p><strong>Last Name:</strong> {{ $user->bio->lastname }}</p>
+                        <p><strong>Nick Name:</strong> {{ $user->bio->nickname }}</p>
+                        <p><strong>City:</strong> {{ $user->bio->city }}</p>
+                        <p><strong>Occupation:</strong> {{ $user->bio->occupation }}</p>
+                        <p><strong>Birthdate:</strong> {{ $user->bio->birthdate }}</p>
                         <p><strong>Gender:</strong> {{ $user->bio->gender }}</p>
                         <p><strong>Looking For:</strong> {{ $user->bio->looking_for }}</p>
                     @else

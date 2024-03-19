@@ -125,14 +125,14 @@
                                             <td>{{ $item->email }}</td>
                                             <td>{{ $item->bio->phone }}</td>
                                             <td>{{ $item->bio->city }}</td>
-                                            @endif
+                                        @endif
                                             <td>{{ $item->bio->occupation }}</td>
                                             <td>{{ $item->bio->birthdate }}</td>
                                             <td>{{ $item->bio->gender }}</td>
                                             <td>{{ $item->bio->looking_for }}</td>
                                             <td>
                                                 @if(auth()->user()->id == 1)
-                                                    {{$event->getEventRatingForUser($event->id)}}
+                                                    {{$event->getEventRatingForUser($item)}}
                                                 @else
                                                 {{ RatingEvent::where([
                                                     ['user_id_from', auth()->user()->id],

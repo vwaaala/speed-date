@@ -59,26 +59,25 @@ class DatingEvent extends Model
         return $this->hasMany(RatingEvent::class, 'event_id');
     }
 
-    function getEventRatingForUser($eventId)
+    function getEventRatingForUser(User $user)
     {
         // Get all participants of the event
-        $participants = $this->matchedParticipants;
+        $participants = $user->events->first()->matchedParticipants;
         if(count($participants) > 0){
-            foreach ($participants as $participant) {
                 // Get all other participants except the current one
-                $otherParticipants = $participants->except($participant->id);
+                $otherParticipants = $participants->except($user->id);
     
                 // Check if the participant has rated all other participants
-                $ratingsCount = RatingEvent::where('user_id_from', $participant->id)
+                $ratingsCount = RatingEvent::where('user_id_from', $user->id)
                     ->whereIn('user_id_to', $otherParticipants->pluck('id'))
-                    ->where('event_id', $eventId)
+                    ->where('event_id', $user->events->first()->id)
                     ->count();
     
                 // Check if the count of ratings matches the count of other participants
                 if ($ratingsCount !== $otherParticipants->count()) {
+                    // dd($ratingsCount.' '.$otherParticipants->count());
                     return 'Still Voting';
                 }
-            }
         }
         
 
