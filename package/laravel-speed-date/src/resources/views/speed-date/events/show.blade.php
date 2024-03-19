@@ -99,7 +99,7 @@
                                 </thead>
                                 <tbody>
                                 @foreach($event->matchedParticipants as $item)
-                                {{-- {{dd($item->events->first()->eventRatings->first()->rating)}} --}}
+                                {{-- {{dd($item->events->last()->eventRatings->first()->rating)}} --}}
                                     @if($item->id !== auth()->user()->id)
                                         <tr>
                                             <td>
@@ -132,7 +132,7 @@
                                             <td>{{ $item->bio->looking_for }}</td>
                                             <td>
                                                 @if(auth()->user()->id == 1)
-                                                    {{$event->getEventRatingForUser($item)}}
+                                                    {{$event->getEventRatingForUser($item, $event->id)}}
                                                 @else
                                                 {{ RatingEvent::where([
                                                     ['user_id_from', auth()->user()->id],

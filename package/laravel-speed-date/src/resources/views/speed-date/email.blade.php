@@ -43,8 +43,8 @@
 <body>
     <div style="padding: 20px;">
         <h1>Hello, {{ $participant->name }}!</h1>
-        <p>Event Name: {{ $participant->events->first()->name }} </p>
-        <p>Event Date: {{ $participant->events->first()->happens_on->format('F j, Y h:i A') }} </p>
+        <p>Event Name: {{ $participant->events->last()->name }} </p>
+        <p>Event Date: {{ $participant->events->last()->happens_on->format('F j, Y h:i A') }} </p>
         <div style="overflow-x:auto;">
             <table>
                 <thead>
