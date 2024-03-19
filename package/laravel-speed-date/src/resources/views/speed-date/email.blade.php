@@ -45,6 +45,7 @@
         <h1>Hello, {{ $participant->name }}!</h1>
         <p>Event Name: {{ $participant->events->last()->name }} </p>
         <p>Event Date: {{ $participant->events->last()->happens_on->format('F j, Y h:i A') }} </p>
+        @if($users->isNotEmpty())
         <div style="overflow-x:auto;">
             <table>
                 <thead>
@@ -88,13 +89,18 @@
                             <td>{{ $user->bio->occupation }}</td>
                             <td>{{ $user->bio->birthdate }}</td>
                             <td>{{ $user->bio->gender }}</td>
-                            <td>{{ $user->eventRatingsGiven->first()->rating }}</td>
-                            <td>{{ $user->eventRatingsReceived->first()->rating }}</td>
+                            <td>{{ $user->eventRatingsGiven->last()->rating }}</td>
+                            <td>{{ $user->eventRatingsReceived->last()->rating }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+        @else
+
+        <p>Better Luck Next Time</p>
+
+        @endif
     </div>
 </body>
 </html>

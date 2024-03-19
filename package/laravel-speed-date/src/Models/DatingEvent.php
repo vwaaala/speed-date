@@ -53,11 +53,11 @@ class DatingEvent extends Model
             
         });
     }
-    public function matchedParticipantsAdmin(User $user)
+    public function matchedParticipantsAdmin(User $user, $eventId)
     {
         $authUser = $user;
-        return $this->participants()->whereHas('bio', function ($query) use ($authUser) {
-            if($authUser->events->last()->type == EventTypeEnum::STRAIGHT){
+        return $this->participants()->whereHas('bio', function ($query) use ($authUser, $eventId) {
+            if($authUser->events->where('id',$eventId)->last()->type == EventTypeEnum::STRAIGHT){
                 if($authUser->bio->gender == GenderEnum::MALE){
                     $query->where('gender', GenderEnum::FEMALE);
                 } else {
@@ -81,12 +81,13 @@ class DatingEvent extends Model
     function getEventRatingForUser(User $user, $eventId)
     {
         // Get all participants of the event
-        $participants = $user->events->last()->matchedParticipantsAdmin($user);
+        $participants = $user->events->where('id',$eventId)->last()->matchedParticipantsAdmin($user, $eventId);
         if($participants->count() > 0){
                 // Get all other participants except the current one
                 $otherParticipants = $participants->select('users.id')
                                     ->where('users.id', '!=', $user->id)
                                     ->get();
+                // dd($participants);
     
                 // Check if the participant has rated all other participants
                 $ratingsCount = RatingEvent::where('user_id_from', $user->id)
@@ -95,9 +96,9 @@ class DatingEvent extends Model
                     ->count();
     
                 // Check if the count of ratings matches the count of other participants
-                if ($ratingsCount !== $otherParticipants->count()) {
+                if ($ratingsCount !== $otherParticipants->count() || $otherParticipants->count() <= 0 || $ratingsCount <= 0) {
                     // dd($ratingsCount.' '.$otherParticipants->count());
-                    return 'Still Voting';
+                    return 'Still Voting: '.$ratingsCount.' '.$otherParticipants->count().' '.$otherParticipants->pluck('id');
                 }
         }
         

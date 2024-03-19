@@ -175,7 +175,6 @@ class DatingEventController extends Controller
     {
         // Get all participants of the event
         $participants = DatingEvent::findOrFail($eventId)->matchedParticipants;
-
         foreach ($participants as $participant) {
             // Get all other participants except the current one
             $otherParticipants = $participants->except($participant->id);
@@ -194,9 +193,8 @@ class DatingEventController extends Controller
 
         foreach ($participants as $participant) {
             $validUsers = $participant->getValidRatingsForEvent($eventId);
-            if ($validUsers && $validUsers->isNotEmpty()) {
-                Notification::route('mail', $validUsers->pluck('email'))->notify(new VoteComplete($validUsers, $participant));
-            }
+            Notification::route('mail', $participant->email)->notify(new VoteComplete($validUsers, $participant));
+            
         }
 
 
