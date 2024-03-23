@@ -99,7 +99,6 @@
                                 </thead>
                                 <tbody>
                                 @foreach($event->matchedParticipants as $item)
-                                {{-- {{dd($item->events->last()->eventRatings->first()->rating)}} --}}
                                     @if($item->id !== auth()->user()->id)
                                         <tr>
                                             <td>

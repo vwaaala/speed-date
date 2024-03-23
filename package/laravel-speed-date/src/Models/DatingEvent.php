@@ -37,7 +37,7 @@ class DatingEvent extends Model
             return $this->belongsToMany(User::class, 'event_users', 'event_id', 'user_id');
         }
         return $this->participants()->whereHas('bio', function ($query) use ($authUser) {
-            if($authUser->events->last()->type == EventTypeEnum::STRAIGHT){
+            if($authUser->events()->latest('created_at')->first()->type == EventTypeEnum::STRAIGHT){
                 if($authUser->bio->gender == GenderEnum::MALE){
                     $query->where('gender', GenderEnum::FEMALE);
                 } else {
@@ -57,7 +57,7 @@ class DatingEvent extends Model
     {
         $authUser = $user;
         return $this->participants()->whereHas('bio', function ($query) use ($authUser, $eventId) {
-            if($authUser->events->where('id',$eventId)->last()->type == EventTypeEnum::STRAIGHT){
+            if($authUser->events->where('id',$eventId)->first()->type == EventTypeEnum::STRAIGHT){
                 if($authUser->bio->gender == GenderEnum::MALE){
                     $query->where('gender', GenderEnum::FEMALE);
                 } else {
@@ -81,7 +81,7 @@ class DatingEvent extends Model
     function getEventRatingForUser(User $user, $eventId)
     {
         // Get all participants of the event
-        $participants = $user->events->where('id',$eventId)->last()->matchedParticipantsAdmin($user, $eventId);
+        $participants = $user->events->where('id',$eventId)->first()->matchedParticipantsAdmin($user, $eventId);
         if($participants->count() > 0){
                 // Get all other participants except the current one
                 $otherParticipants = $participants->select('users.id')

@@ -99,7 +99,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $otheruser = $this->where('id', $otheruserid)->first();
         $user = auth()->user();
 
-        if($user->events->last()->id == $otheruser->events->last()->id ){
+        if($user->events()->latest('created_at')->first()->id == $otheruser->events()->latest('created_at')->first()->id ){
             return true;
         }
         return false;
