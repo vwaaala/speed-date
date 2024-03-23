@@ -19,7 +19,7 @@
                 @endif
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body table-responsive">
             <!-- Table to display permissions -->
             @if(isset($events) && count($events) > 0)
                 <table class="table">
