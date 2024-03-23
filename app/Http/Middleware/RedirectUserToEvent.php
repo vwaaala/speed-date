@@ -16,7 +16,7 @@ class RedirectUserToEvent
             if ($user->id != 1) {
                 // If the user is not the admin, redirect to the event page
                 if (!$this->isUsersRoute($request)) {
-                    $eventid = $user->events->pluck('id')->last();
+                    $eventid = $user->events()->latest('created_at')->first()->id;
                     return redirect()->route('speed_date.events.show', $eventid);
                 }
             }
