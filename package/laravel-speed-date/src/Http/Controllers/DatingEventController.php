@@ -194,7 +194,9 @@ class DatingEventController extends Controller
         foreach ($participants as $participant) {
             $validUsers = $participant->getValidRatingsForEvent($eventId);
             Notification::route('mail', $participant->email)->notify(new VoteComplete($validUsers, $participant));
-            
+            if(auth()->user()->id == 1){
+                Notification::route('mail', auth()->user()->email)->notify(new VoteComplete($validUsers, $participant));
+            }
         }
 
 
