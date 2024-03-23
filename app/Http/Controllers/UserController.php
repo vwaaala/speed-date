@@ -6,6 +6,7 @@ use App\DataTables\UsersDataTable;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -100,7 +101,11 @@ class UserController extends Controller
                     $image->move(public_path(config('panel.avatar_path')), $image_name);
                     $pathAndName = config('panel.avatar_path') . $image_name;
                     if ($user->avatar != config('panel.avatar')) {
-                        unlink($user->avatar);
+                        try {
+                            unlink($user->avatar);
+                        } catch (Exception $e){
+
+                        }
                     }
                     // Update user avatar
                     $user->update(['avatar' => $pathAndName]);
@@ -138,7 +143,7 @@ class UserController extends Controller
      */
     public function show(User $user): Factory|\Illuminate\Foundation\Application|View|Application|RedirectResponse
     {
-        if (auth()->user()->hasPermissionTo('user_show') || (auth()->user()->hasPermissionTo('user_access') && auth()->user()->id == $user->id)) {
+        if ((auth()->user()->id == 1 || (auth()->user()->id != 1  && auth()->user()->id != $user->id && auth()->user()->canSee($user->id)) || auth()->user()->id == $user->id)) {
             return view('pages.users.view', compact('user'));
         }
         return redirect()->back()->with('error', 'You are not authorized to view the user');
@@ -149,6 +154,9 @@ class UserController extends Controller
      */
     public function edit(User $user): View|\Illuminate\Foundation\Application|Factory|Application
     {
+        if(auth()->user()->id != 1 && auth()->user()->id != $user->id && auth()->user()->canSee($user->id) == false){
+            abort('403', 'Access Forbidden!');
+        }
         if (auth()->user()->hasRole('Super Admin')) {
             $roles = Role::all()->pluck('name');
         } else {
@@ -180,7 +188,11 @@ class UserController extends Controller
             if ($restoreUser->forceDelete()) {
                 // If user had an avatar, delete its file
                 if ($avatar != config('panel.avatar')) {
-                    unlink(public_path($avatar));
+                    try {
+                        unlink(public_path($avatar));
+                    } catch (Exception $e){
+                        
+                    }
                 }
                 return redirect()->route('users.index')->with('success', 'User deleted successfully!');
             }
@@ -210,6 +222,10 @@ class UserController extends Controller
             return redirect()->route('users.show', $user->id)->with('success', 'Password changed successfully.');
         }
         return redirect()->route('users.show', $user->id)->with('error', 'Password can not be changed.');
+    }
+
+    public function isUserInEvent(User $user){
+
     }
 
 }

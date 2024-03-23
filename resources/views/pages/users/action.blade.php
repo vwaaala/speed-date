@@ -21,7 +21,7 @@
     @endif
 
     @can('user_delete')
-        <a onclick="confirmDelete('{{ request()->has('show_deleted') ? route('users.forceDelete', $id) : route('users.destroy', $id) }}')" href="#" class="btn btn-sm btn-danger"
+        <a onclick="confirmDelete('{{ request()->has('show_deleted') ? route('users.forceDelete', $id) : route('users.destroy', $id) }}', 'DELETE', {color: 'danger', text: 'Yes, delete it!'})" class="btn btn-sm btn-danger"
            title="{{ __('global.delete') }}">
             <span class="bi bi-trash"></span> <!-- Bootstrap arrow-return-left icon -->
         </a>

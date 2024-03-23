@@ -26,7 +26,7 @@
                     <td>{{ $event->name }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Date and Time:</th>
+                    <th scope="row">Event Date:</th>
                     <td>{{ $event->happens_on->format('F j, Y h:i A') }}</td>
                 </tr>
                 <tr>
@@ -59,15 +59,18 @@
                                             Nick Name
                                         </th>
                                         @if(auth()->user()->id == 1)
-                                        <th>
-                                            Last Name
-                                        </th>
-                                        <th>
-                                            Phone
-                                        </th>
-                                        <th>
-                                            City
-                                        </th>
+                                            <th>
+                                                Last Name
+                                            </th>
+                                            <th>
+                                                Email
+                                            </th>
+                                            <th>
+                                                Phone
+                                            </th>
+                                            <th>
+                                                City
+                                            </th>
                                         @endif
                                         <th>
                                             Occupation
@@ -82,7 +85,12 @@
                                             Looking For
                                         </th>
                                         <th>
-                                            Rating
+                                            @if(auth()->user()->id == 1)
+                                                Vote Status
+                                            @else
+                                                Rating
+                                            @endif
+                                            
                                         </th>
                                         <th>
                                             Action
@@ -91,7 +99,7 @@
                                 </thead>
                                 <tbody>
                                 @foreach($event->matchedParticipants as $item)
-                                {{-- {{dd($item->events->first()->eventRatings->first()->rating)}} --}}
+                                {{-- {{dd($item->events->last()->eventRatings->first()->rating)}} --}}
                                     @if($item->id !== auth()->user()->id)
                                         <tr>
                                             <td>
@@ -114,16 +122,17 @@
 
                                         @if(auth()->user()->id == 1)
                                             <td>{{ $item->bio->lastname }}</td>
+                                            <td>{{ $item->email }}</td>
                                             <td>{{ $item->bio->phone }}</td>
                                             <td>{{ $item->bio->city }}</td>
-                                            @endif
+                                        @endif
                                             <td>{{ $item->bio->occupation }}</td>
                                             <td>{{ $item->bio->birthdate }}</td>
                                             <td>{{ $item->bio->gender }}</td>
                                             <td>{{ $item->bio->looking_for }}</td>
                                             <td>
                                                 @if(auth()->user()->id == 1)
-                                                    {{$event->getEventRatingForUser($event->id)}}
+                                                    {{$event->getEventRatingForUser($item, $event->id)}}
                                                 @else
                                                 {{ RatingEvent::where([
                                                     ['user_id_from', auth()->user()->id],

@@ -8,11 +8,14 @@ use Bunker\LaravelSpeedDate\Enums\EventTypeEnum;
 use Bunker\LaravelSpeedDate\Models\DatingEvent;
 use Bunker\LaravelSpeedDate\Models\RatingEvent;
 use Bunker\LaravelSpeedDate\Models\UserBio;
+use Bunker\LaravelSpeedDate\Notifications\VoteComplete;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class DatingEventController extends Controller
 {
@@ -172,7 +175,6 @@ class DatingEventController extends Controller
     {
         // Get all participants of the event
         $participants = DatingEvent::findOrFail($eventId)->matchedParticipants;
-
         foreach ($participants as $participant) {
             // Get all other participants except the current one
             $otherParticipants = $participants->except($participant->id);
@@ -188,6 +190,15 @@ class DatingEventController extends Controller
                 return redirect()->route('speed_date.events.index')->with('error', 'Vote is not finished yet.');
             }
         }
+
+        foreach ($participants as $participant) {
+            $validUsers = $participant->getValidRatingsForEvent($eventId);
+            Notification::route('mail', $participant->email)->notify(new VoteComplete($validUsers, $participant));
+            if(auth()->user()->id == 1){
+                Notification::route('mail', auth()->user()->email)->notify(new VoteComplete($validUsers, $participant));
+            }
+        }
+
 
         return redirect()->route('speed_date.events.index')->with('success', 'Vote completed and notifications sent.');
     }

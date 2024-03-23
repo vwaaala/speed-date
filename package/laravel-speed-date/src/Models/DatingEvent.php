@@ -3,6 +3,8 @@
 namespace Bunker\LaravelSpeedDate\Models;
 
 use App\Models\User;
+use Bunker\LaravelSpeedDate\Enums\EventTypeEnum;
+use Bunker\LaravelSpeedDate\Enums\GenderEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -35,43 +37,73 @@ class DatingEvent extends Model
             return $this->belongsToMany(User::class, 'event_users', 'event_id', 'user_id');
         }
         return $this->participants()->whereHas('bio', function ($query) use ($authUser) {
-            $query->whereIn('looking_for', [$authUser->bio->gender, 'both']);
-            
-            if ($authUser->bio->looking_for !== 'both') {
-                $query->where('gender', $authUser->bio->looking_for);
+            if($authUser->events->last()->type == EventTypeEnum::STRAIGHT){
+                if($authUser->bio->gender == GenderEnum::MALE){
+                    $query->where('gender', GenderEnum::FEMALE);
+                } else {
+                    $query->where('gender', GenderEnum::MALE);
+                } 
+            } else {
+                if($authUser->bio->gender == GenderEnum::MALE){
+                    $query->where('gender', GenderEnum::MALE);
+                } else {
+                    $query->where('gender', GenderEnum::FEMALE);
+                }
             }
+            
         });
     }
-
+    public function matchedParticipantsAdmin(User $user, $eventId)
+    {
+        $authUser = $user;
+        return $this->participants()->whereHas('bio', function ($query) use ($authUser, $eventId) {
+            if($authUser->events->where('id',$eventId)->last()->type == EventTypeEnum::STRAIGHT){
+                if($authUser->bio->gender == GenderEnum::MALE){
+                    $query->where('gender', GenderEnum::FEMALE);
+                } else {
+                    $query->where('gender', GenderEnum::MALE);
+                } 
+            } else {
+                if($authUser->bio->gender == GenderEnum::MALE){
+                    $query->where('gender', GenderEnum::MALE);
+                } else {
+                    $query->where('gender', GenderEnum::FEMALE);
+                }
+            }
+            
+        });
+    }
     public function eventRatings()
     {
         return $this->hasMany(RatingEvent::class, 'event_id');
     }
 
-    function getEventRatingForUser($eventId)
+    function getEventRatingForUser(User $user, $eventId)
     {
         // Get all participants of the event
-        $participants = $this->matchedParticipants;
-        if(count($participants) > 0){
-            foreach ($participants as $participant) {
+        $participants = $user->events->where('id',$eventId)->last()->matchedParticipantsAdmin($user, $eventId);
+        if($participants->count() > 0){
                 // Get all other participants except the current one
-                $otherParticipants = $participants->except($participant->id);
+                $otherParticipants = $participants->select('users.id')
+                                    ->where('users.id', '!=', $user->id)
+                                    ->get();
+                // dd($participants);
     
                 // Check if the participant has rated all other participants
-                $ratingsCount = RatingEvent::where('user_id_from', $participant->id)
+                $ratingsCount = RatingEvent::where('user_id_from', $user->id)
                     ->whereIn('user_id_to', $otherParticipants->pluck('id'))
                     ->where('event_id', $eventId)
                     ->count();
     
                 // Check if the count of ratings matches the count of other participants
-                if ($ratingsCount !== $otherParticipants->count()) {
-                    return 'Still Voting';
+                if ($ratingsCount !== $otherParticipants->count() || $otherParticipants->count() <= 0 || $ratingsCount <= 0) {
+                    // dd($ratingsCount.' '.$otherParticipants->count());
+                    return 'Still Voting: '.$ratingsCount.' '.$otherParticipants->count().' '.$otherParticipants->pluck('id');
                 }
-            }
         }
         
 
-        return 'Vote completed';
+        return 'Done';
     }
 
 }

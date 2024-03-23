@@ -26,7 +26,7 @@
                             <div class="row">
                                 <div class="col-12 mb-2">
                                     <!-- Input field for user's name -->
-                                    <label for="name" class="form-label">{{ __('pages.users.fields.title') }} <span
+                                    <label for="name" class="form-label">First Name <span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror"
                                            id="name"
@@ -227,9 +227,6 @@
                                 name="gender">
                             @foreach(GenderEnum::toArray() as $value)
                                     @php
-                                    if($value == GenderEnum::BOTH){
-                                        continue;
-                                    }
                                     $isSelected = ($user->bio->gender == $value) ? 'selected' : '';
                                     @endphp
                                 <option
