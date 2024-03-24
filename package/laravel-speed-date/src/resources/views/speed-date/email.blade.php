@@ -44,7 +44,7 @@
     <div style="padding: 20px;">
         <h1>Hello, {{ $participant->name }}!</h1>
         <p>Event Name: {{ $participant->events()->latest('created_at')->first()->name }} </p>
-        <p>Event Date: {{ $participant->events()->latest('created_at')->first()->happens_on->format('F j, Y h:i A') }} </p>
+        <p>Event Date: {{ $participant->events()->latest('created_at')->first()->happens_on->format('F j, Y') }} </p>
         @if($users->isNotEmpty())
         <div style="overflow-x:auto;">
             <table>

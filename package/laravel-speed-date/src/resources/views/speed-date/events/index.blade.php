@@ -41,7 +41,7 @@
                             <!-- Output the row number -->
                             <th scope="row">{{ $loop->iteration }}</th>
                             <!-- Display permissions name and description -->
-                            <td>{{ $value->happens_on->format('l, F j, Y \a\t g:i A') }}
+                            <td>{{ $value->happens_on->format('F j, Y') }}
                             </td>
                             <td>{{ $value->name }}</td>
                             <td>{{ count($value->participants) }}</td>
