@@ -87,12 +87,12 @@ return [
         'text' => 'global.all',
         'href' => 'users.index',
         'children' => [
-            // [
-            //     'permission' => 'user_create',
-            //     'text' => 'global.create',
-            //     'href' => 'users.create',
-            //     'sidebar' => true
-            // ],
+            [
+                'permission' => 'user_create',
+                'text' => 'global.create',
+                'href' => 'users.create',
+                'sidebar' => true
+            ],
             [
                 'permission' => 'users_edit',
                 'text' => 'global.edit',

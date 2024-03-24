@@ -15,8 +15,22 @@
     <!-- vite styles -->
     @vite(['resources/sass/app.scss'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- jquery -->
+    <script src="{{ asset('assets/libs/jquery/dist/jquery.js') }}"></script>
     <!-- page specific styles -->
     @stack('styles')
+    <style>
+        .nav-item.active .dropdown-toggle::after {
+        display: inline-block;
+        margin-left: 0.255em;
+        vertical-align: 0.255em;
+        content: "";
+        border-top: 0;
+        border-right: 0.3em solid transparent;
+        border-bottom: 0.3em solid;
+        border-left: 0.3em solid transparent;
+    }
+    </style>
 </head>
 
 <body>
@@ -67,24 +81,11 @@
         </footer>
     </div>
 </div>
-<!-- jquery -->
-<script src="{{ asset('assets/libs/jquery/dist/jquery.js') }}"></script>
+
 <!-- vite scripts -->
 @vite(['resources/js/app.js'])
 <!-- page specific js -->
 @stack('scripts')
-<style>
-    .nav-item.active .dropdown-toggle::after {
-    display: inline-block;
-    margin-left: 0.255em;
-    vertical-align: 0.255em;
-    content: "";
-    border-top: 0;
-    border-right: 0.3em solid transparent;
-    border-bottom: 0.3em solid;
-    border-left: 0.3em solid transparent;
-}
-</style>
 </body>
 
 </html>

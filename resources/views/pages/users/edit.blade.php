@@ -2,12 +2,13 @@
     use Bunker\LaravelSpeedDate\Enums\GenderEnum;
 @endphp
 @extends('layouts.app')
-@push('scripts')
+@push('styles')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="{{ asset('assets/libs/select2/select2.min.js')}}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 @endpush
 @section('content')
-
     <div class="card p-4">
         <div class="row">
             <div class="col-lg-6 col-md-12 col-12 mb-2">
@@ -42,7 +43,8 @@
                                     <label for="email" class="form-label">{{ __('pages.users.fields.email') }}</label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                                            id="email"
-                                           value="{{ $user->email }}" disabled>
+                                           name="email"
+                                           value="{{ $user->email }}" {{ auth()->user()->id == 1 && auth()->user()->id != $user->id ? '' : 'disabled'}}>
                                     <div id="emailHelp" class="form-text">We'll never share your email with anyone else.
                                     </div>
                                     @error('email')
@@ -112,6 +114,27 @@
                                                 @endforeach
                                             </select>
                                             @error('status')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            <!-- Error message for status select -->
+                                            @enderror
+                                        </div>
+                                        
+                                        <div class="col-6 mb-2">
+                                            <!-- Dropdown for selecting user's status -->
+                                            <label for="eventSelect" class="form-label">{{ __('global.event') }} <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select select2 @error('event') is-invalid @enderror"
+                                                    id="eventSelect"
+                                                    name="event">
+                                                @foreach($events as $item)
+                                                        <?php
+                                                        $isSelected = ($user->events()->latest('created_at')->first()->id == $item->id) ? 'selected' : '';
+                                                        ?>
+                                                    <option
+                                                        value="{{ $item->id }}" {{ $isSelected }}>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('event')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                             <!-- Error message for status select -->
                                             @enderror
@@ -259,22 +282,17 @@
         </div>
     </div>
 </div>
-
 @endif
-        </div>
-    </div>
-
 @endsection
 
 @push('scripts')
 <script>
     $(document).ready(function(){
-    $('#birthdate').datepicker({
-        format: 'yyyy/mm/dd',
-        autoclose: true
+        $('#birthdate').datepicker({
+            format: 'yyyy/mm/dd',
+            autoclose: true
+        });
+        $('.select2').select2();
     });
-});
-
 </script>
-
 @endpush

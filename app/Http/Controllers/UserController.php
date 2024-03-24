@@ -13,6 +13,9 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Bunker\LaravelSpeedDate\Models\DatingEvent;
+use Bunker\LaravelSpeedDate\Models\UserBio;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -32,6 +35,20 @@ class UserController extends Controller
     public function index(UsersDataTable $dataTable)
     {
         return $dataTable->render('pages.users.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(): View|\Illuminate\Foundation\Application|Factory|Application
+    {
+        if (auth()->user()->hasRole('Super Admin')) {
+            $roles = Role::all()->pluck('name');
+        } else {
+            $roles = Role::whereNotIn('name', ['Super Admin', 'Admin'])->pluck('name');
+        }
+        $events = DatingEvent::orderBy('created_at', 'desc')->select('id', 'name')->get();
+        return view('pages.users.create', compact('roles', 'events'));
     }
 
     /**
@@ -62,33 +79,42 @@ class UserController extends Controller
                 // Update user avatar
                 $newUser->update(['avatar' => config('panel.avatar')]);
             }
+            $event = DatingEvent::findOrFail($request->get('event'));
+            $event->participants()->syncWithoutDetaching($event->id);
+            UserBio::create(['user_id' => $newUser->id, 'nickname' => $request->get('nickname'), 'lastname' => $request->get('lastname'), 'city' => $request->get('city'), 'occupation' => $request->get('occupation'), 'phone' => $request->get('phone'), 'birthdate' => $request->get('birthdate'), 'gender' => $request->get('gender'), 'looking_for' => $request->get('looking_for')]);
+            $event->participants()->syncWithoutDetaching($newUser->id);
             return redirect()->route('users.index')->with('success', 'User created successfully');
         }
         return redirect()->route('users.index')->with('error', 'Failed to create user.');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for editing the specified resource.
      */
-    public function create(): View|\Illuminate\Foundation\Application|Factory|Application
+    public function edit(User $user): View|\Illuminate\Foundation\Application|Factory|Application
     {
+        if(auth()->user()->id != 1 && auth()->user()->id != $user->id && auth()->user()->canSee($user->id) == false){
+            abort('403', 'Access Forbidden!');
+        }
         if (auth()->user()->hasRole('Super Admin')) {
             $roles = Role::all()->pluck('name');
         } else {
             $roles = Role::whereNotIn('name', ['Super Admin', 'Admin'])->pluck('name');
         }
-        return view('pages.users.create', compact('roles'));
+        $events = DatingEvent::orderBy('created_at', 'desc')->select('id', 'name')->get();
+        if (auth()->user()->id == $user->id && auth()->user()->hasPermissionTo('user_edit')) {
+            $roles = [];
+            $events = [];
+        }
+        return view('pages.users.edit', compact('user', 'roles', 'events'));
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        if(auth()->user()->hasRole('User') && auth()->user()->id != $user->id){
-            dd('hello');
-//            abort(403, 'You are not authorized');
-        }
         if(auth()->check()){
             if ($user->update(['name' => $request->get('name'), 'status' => $request->get('status') != null ? $request->get('status') : $user->status])) {
                 // Check if avatar file exists in requestW
@@ -112,12 +138,25 @@ class UserController extends Controller
                 } else {
                     $user->update(['avatar' => config('panel.avatar')]);
                 }
+                // let admin change user email only
+                if(auth()->user()->id == 1 && auth()->user()->id != $user->id){
+                    $request->validate([
+                        'email' => [
+                            'email',
+                            Rule::unique('users')->ignore($user->id),
+                        ],
+                    ]);
+                    $user->update(['email' => $request->get('email')]);
+                    $event = DatingEvent::findOrFail($request->get('event'));
+                    $event->participants()->syncWithoutDetaching($event->id);
+                }
                 if(auth()->user()->id != 1){
                     $eventid = $user->events->pluck('id')->first();
                     return redirect()->route('speed_date.events.show', $eventid)->with('success', 'Profile updated successfully');
                 }
                 return redirect()->route('users.index')->with('success', 'User updated successfully');
             }
+            return redirect()->back()->with('error', 'Failed to update user ');
         }
         
         return redirect()->route('users.index')->with('error', 'Can not update user!');
@@ -147,25 +186,6 @@ class UserController extends Controller
             return view('pages.users.view', compact('user'));
         }
         return redirect()->back()->with('error', 'You are not authorized to view the user');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user): View|\Illuminate\Foundation\Application|Factory|Application
-    {
-        if(auth()->user()->id != 1 && auth()->user()->id != $user->id && auth()->user()->canSee($user->id) == false){
-            abort('403', 'Access Forbidden!');
-        }
-        if (auth()->user()->hasRole('Super Admin')) {
-            $roles = Role::all()->pluck('name');
-        } else {
-            $roles = Role::whereNotIn('name', ['Super Admin', 'Admin'])->pluck('name');
-        }
-        if (auth()->user()->id == $user->id && auth()->user()->hasPermissionTo('user_edit')) {
-            $roles = [];
-        }
-        return view('pages.users.edit', compact('user', 'roles'));
     }
 
     /**
