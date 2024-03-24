@@ -39,7 +39,7 @@
                     @foreach($events as $key => $value)
                         <tr>
                             <!-- Output the row number -->
-                            <th scope="row">{{ $loop->iteration }}</th>
+                            <th scope="row">{{ $value->id }}</th>
                             <!-- Display permissions name and description -->
                             <td>{{ $value->happens_on->format('F j, Y') }}
                             </td>
