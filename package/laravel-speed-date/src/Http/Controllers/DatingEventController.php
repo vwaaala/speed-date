@@ -45,12 +45,12 @@ class DatingEventController extends Controller
                 })->where(function ($query) use ($searchQuery) {
                         // Condition for searching event names
                         $query->where('dating_events.name', 'like', '%' . $searchQuery . '%');
-                    })->paginate(10);
+                    })->orderBy('created_at', 'desc')->paginate(10);
             } else {
                 // If no search parameter, fetch all permissions with pagination
                 $events = DatingEvent::whereHas('participants', function ($query) use ($authUser) {
                     $query->where('users.id', $authUser->id);
-                })->paginate(10);
+                })->orderBy('created_at', 'desc')->paginate(10);
             }
         } else {
             if ($request->has('search')) {
@@ -58,7 +58,7 @@ class DatingEventController extends Controller
                 $events = DatingEvent::where('name', 'like', '%' . $searchQuery . '%')->paginate(10);
             } else {
                 // If no search parameter, fetch all permissions with pagination
-                $events = DatingEvent::paginate(10);
+                $events = DatingEvent::orderBy('created_at', 'desc')->paginate(10);
 
             }
         }
