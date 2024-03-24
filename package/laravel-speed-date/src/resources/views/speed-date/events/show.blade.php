@@ -27,7 +27,7 @@
                 </tr>
                 <tr>
                     <th scope="row">Event Date:</th>
-                    <td>{{ $event->happens_on->format('F j, Y h:i A') }}</td>
+                    <td>{{ $event->happens_on->format('F j, Y') }}</td>
                 </tr>
                 <tr>
                     <th scope="row">Event Type:</th>
