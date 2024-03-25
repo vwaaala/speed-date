@@ -32,7 +32,7 @@ class UpdateUserRequest extends FormRequest
 
             // Validation rule for the 'role' field: required, using the ValidRole custom rule.
             'role' => [new ValidRole],
-            'avatar' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+            'avatar' => 'image|mimes:jpeg,png,jpg'
         ];
 
         // If 'avatar' field is present in the request, apply the validation rules
