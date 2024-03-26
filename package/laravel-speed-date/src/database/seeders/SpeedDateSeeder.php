@@ -33,17 +33,10 @@ class SpeedDateSeeder extends Seeder
         $super->givePermissionTo($permissions);
         $user->givePermissionTo(['sd_event_show', 'sd_rating_create']);
 
-        DatingEvent::create([
-            'name' => 'name',
-            'happens_on' => '03/13/2024 14:30',
-            'type' => 'gay',
-            'status' => 1,
-        ]);
-
         UserBio::create([
             'user_id'  => 2,
-            'nickname'=> 'JDoe',
-            'lastname'=> 'JDoe Last',
+            'nickname'=> 'Muqeet',
+            'lastname'=> 'Last',
             'city' => 'New York',
             'occupation' => 'Web Designer',
             'phone' => '1234567890',
@@ -51,5 +44,103 @@ class SpeedDateSeeder extends Seeder
             'gender' => 'female',
             'looking_for' => 'male'
         ]);
+
+        UserBio::create([
+            'user_id'  => 3,
+            'nickname'=> 'Baul',
+            'lastname'=> 'Last',
+            'city' => 'New York',
+            'occupation' => 'Web Designer',
+            'phone' => '1234567890',
+            'birthdate' => '1988-12-13',
+            'gender' => 'female',
+            'looking_for' => 'male'
+        ]);
+
+        UserBio::create([
+            'user_id'  => 4,
+            'nickname'=> 'Nogor',
+            'lastname'=> 'Last',
+            'city' => 'New York',
+            'occupation' => 'Web Designer',
+            'phone' => '1234567890',
+            'birthdate' => '1988-12-13',
+            'gender' => 'male',
+            'looking_for' => 'female'
+        ]);
+
+        UserBio::create([
+            'user_id'  => 5,
+            'nickname'=> 'Manager',
+            'lastname'=> 'Last',
+            'city' => 'New York',
+            'occupation' => 'Web Designer',
+            'phone' => '1234567890',
+            'birthdate' => '1988-12-13',
+            'gender' => 'male',
+            'looking_for' => 'female'
+        ]);
+
+        UserBio::create([
+            'user_id'  => 6,
+            'nickname'=> 'Live',
+            'lastname'=> 'Last',
+            'city' => 'New York',
+            'occupation' => 'Web Designer',
+            'phone' => '1234567890',
+            'birthdate' => '1988-12-13',
+            'gender' => 'male',
+            'looking_for' => 'male'
+        ]);
+
+        UserBio::create([
+            'user_id'  => 7,
+            'nickname'=> 'Bapi',
+            'lastname'=> 'Last',
+            'city' => 'New York',
+            'occupation' => 'Web Designer',
+            'phone' => '1234567890',
+            'birthdate' => '1988-12-13',
+            'gender' => 'male',
+            'looking_for' => 'male'
+        ]);
+
+        UserBio::create([
+            'user_id'  => 8,
+            'nickname'=> 'Bai',
+            'lastname'=> 'Last',
+            'city' => 'New York',
+            'occupation' => 'Web Designer',
+            'phone' => '1234567890',
+            'birthdate' => '1988-12-13',
+            'gender' => 'female',
+            'looking_for' => 'female'
+        ]);
+
+        UserBio::create([
+            'user_id'  => 9,
+            'nickname'=> 'Lead',
+            'lastname'=> 'Last',
+            'city' => 'New York',
+            'occupation' => 'Web Designer',
+            'phone' => '1234567890',
+            'birthdate' => '1988-12-13',
+            'gender' => 'female',
+            'looking_for' => 'female'
+        ]);
+
+        $event = DatingEvent::create([
+            'name' => 'gay',
+            'happens_on' => '03/13/2024 14:30',
+            'type' => 'gay',
+            'status' => 1,
+        ]);
+        DatingEvent::create([
+            'name' => 'straight',
+            'happens_on' => '03/13/2024 14:30',
+            'type' => 'straight',
+            'status' => 1,
+        ]);
+        $event->participants()->syncWithoutDetaching([2,3,4,5,6,7,8,9]);
     }
 }

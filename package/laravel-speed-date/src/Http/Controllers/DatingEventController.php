@@ -31,7 +31,7 @@ class DatingEventController extends Controller
         $this->middleware('permission:sd_event_delete', ['only' => ['destroy']]);
     }
 
-    public function index(Request $request): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+    public function index(Request $request): View
     {
 
         $searchQuery = '';
