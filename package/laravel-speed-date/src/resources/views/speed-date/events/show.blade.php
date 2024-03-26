@@ -7,7 +7,7 @@
 @endpush
 @section('content')
 <div class="card mb-4">
-    <div class="card-header m-3">
+    <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Event Details</h4>
             @can('sd_event_create')
@@ -41,7 +41,7 @@
 
         <div class="col-12 mb-2">
             <div class="card">
-                <div class="card-header m-3">
+                <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">Participants</h4>
                     </div>
@@ -102,6 +102,7 @@
                                     @if(auth()->user()->hasRole('User'))
                                     @php
                                     $alreadyRated = $event->getRating(auth()->user(), $participant);
+                                    dump($alreadyRated);
                                     @endphp
 
                                     @can('sd_rating_create')
@@ -133,14 +134,14 @@
         @can('sd_rating_show')
         <div class="col-12">
             <div class="card">
-                <div class="card-header m-3">
+                <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">Ratings</h4>
                     </div>
                 </div>
                 <div class="card-body table-responsive">
                     @if(count($event->eventRatings) > 0)
-                    <table class="table table-striped m-3">
+                    <table class="table table-stripeds">
                         <thead>
                             <tr>
                                 <th>User From</th>
@@ -173,6 +174,36 @@
                                         </div>
                                     </a>
                                 </td>
+                                @if(auth()->user()->hasRole('User'))
+                                    @php
+                                        $alreadyRated = RatingEvent::where([
+                                            ['user_id_from', auth()->user()->id],
+                                            ['user_id_to', $item->id],
+                                            ['event_id', $event->id]
+                                        ])->exists();
+                                    @endphp
+
+                                    @can('sd_rating_create')
+                                        {{-- @if(!$alreadyRated) --}}
+                                            <a href="#"
+                                                class="btn btn-sm btn-outline-primary mr-2 rate-button" style="width:100px;"
+                                                onclick="openRateModal('{{ $participant->email }}', '{{ $event->id }}')"><i
+                                                    class="bi bi-activity"></i> Rate Now</a>
+                                        {{-- @endif --}}
+                                    @endcan
+                                @else
+                                    @can('sd_rating_create')
+                                    @php
+                                    $route = route('speed_date.events.removeParticipant', ['eventId' => $event->id, 'userId' => $participant->id]);
+                                    @endphp
+                                        <a href="#"
+                                            onclick="confirmDelete($route, 'POST', {color: 'danger', text: 'Yes, delete it!'})"
+                                            class="btn btn-danger btn-sm"
+                                            title="{{ __('global.remove') }}">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    @endcan
+                                @endif
                             </tr>
                             @endforeach
                         </tbody>
