@@ -93,7 +93,7 @@ class UserController extends Controller
      */
     public function edit(User $user): View|\Illuminate\Foundation\Application|Factory|Application
     {
-        if(auth()->user()->id != 1 && auth()->user()->id != $user->id && auth()->user()->canSee($user->id) == false){
+        if(auth()->user()->id != 1 && auth()->user()->id != $user->id){
             abort('403', 'Access Forbidden!');
         }
         if (auth()->user()->hasRole('Super Admin')) {
@@ -102,7 +102,8 @@ class UserController extends Controller
             $roles = Role::whereNotIn('name', ['Super Admin', 'Admin'])->pluck('name');
         }
         $events = DatingEvent::orderBy('created_at', 'desc')->select('id', 'name')->get();
-        if (auth()->user()->id == $user->id && auth()->user()->hasPermissionTo('user_edit')) {
+
+        if (auth()->user()->id == $user->id && auth()->user()->hasRole('User')) {
             $roles = [];
             $events = [];
         }

@@ -29,81 +29,65 @@ class DatingEvent extends Model
     {
         return $this->belongsToMany(User::class, 'event_users', 'event_id', 'user_id');
     }
+
     // Define relationship with participants (users)
-    public function matchedParticipants()
+    public function ratings()
     {
-        $authUser = auth()->user();
-        if($authUser->id == 1){
-            return $this->belongsToMany(User::class, 'event_users', 'event_id', 'user_id');
-        }
-        return $this->participants()->whereHas('bio', function ($query) use ($authUser) {
-            if($authUser->events()->latest('created_at')->first()->type == EventTypeEnum::STRAIGHT){
-                if($authUser->bio->gender == GenderEnum::MALE){
-                    $query->where('gender', GenderEnum::FEMALE);
-                } else {
-                    $query->where('gender', GenderEnum::MALE);
-                } 
-            } else {
-                if($authUser->bio->gender == GenderEnum::MALE){
-                    $query->where('gender', GenderEnum::MALE);
-                } else {
-                    $query->where('gender', GenderEnum::FEMALE);
-                }
-            }
-            
-        });
+        return $this->hasMany(RatingEvent::class, 'event_id', 'id');
     }
-    public function matchedParticipantsAdmin(User $user, $eventId)
+    // Define relationship with participants (users)
+    public function matchedParticipants($user)
     {
-        $authUser = $user;
-        return $this->participants()->whereHas('bio', function ($query) use ($authUser, $eventId) {
-            if($authUser->events->where('id',$eventId)->first()->type == EventTypeEnum::STRAIGHT){
-                if($authUser->bio->gender == GenderEnum::MALE){
-                    $query->where('gender', GenderEnum::FEMALE);
-                } else {
-                    $query->where('gender', GenderEnum::MALE);
-                } 
-            } else {
-                if($authUser->bio->gender == GenderEnum::MALE){
-                    $query->where('gender', GenderEnum::MALE);
-                } else {
-                    $query->where('gender', GenderEnum::FEMALE);
-                }
-            }
-            
-        });
+        return $this->participants()->where('user_id', '!=', $user->id)->whereHas('bio', function ($query) use ($user) {
+            $eventType = $this->type;
+            $userGender = $user->bio->gender;
+
+            $targetGender = ($eventType == EventTypeEnum::STRAIGHT) ? 
+                ($userGender == GenderEnum::MALE ? GenderEnum::FEMALE : GenderEnum::MALE) :
+                ($userGender == GenderEnum::MALE ? GenderEnum::MALE : GenderEnum::FEMALE);
+
+            $query->where('gender', $targetGender);
+        }); // Ensure to retrieve the matched participants
     }
+
     public function eventRatings()
     {
         return $this->hasMany(RatingEvent::class, 'event_id');
     }
 
-    function getEventRatingForUser(User $user, $eventId)
+    function ratingStatusOfParticipant(User $user)
     {
         // Get all participants of the event
-        $participants = $user->events->where('id',$eventId)->first()->matchedParticipantsAdmin($user, $eventId);
+        $participants = $this->matchedParticipants($user);
         if($participants->count() > 0){
-                // Get all other participants except the current one
-                $otherParticipants = $participants->select('users.id')
-                                    ->where('users.id', '!=', $user->id)
-                                    ->get();
-                // dd($participants);
-    
-                // Check if the participant has rated all other participants
-                $ratingsCount = RatingEvent::where('user_id_from', $user->id)
-                    ->whereIn('user_id_to', $otherParticipants->pluck('id'))
-                    ->where('event_id', $eventId)
-                    ->count();
-    
-                // Check if the count of ratings matches the count of other participants
-                if ($ratingsCount !== $otherParticipants->count() || $otherParticipants->count() <= 0 || $ratingsCount <= 0) {
-                    // dd($ratingsCount.' '.$otherParticipants->count());
-                    return 'Still Voting: '.$ratingsCount.' '.$otherParticipants->count().' '.$otherParticipants->pluck('id');
-                }
+            // Get all other participants except the current one
+            $otherParticipants = $participants->select('users.id')
+                ->where('users.id', '!=', $user->id)
+                ->get();
+
+            // Check if the participant has rated all other participants
+            $ratingsCount = $this->eventRatings()->where('user_id_from', $user->id)
+                ->whereIn('user_id_to', $otherParticipants->pluck('id'))
+                ->where('event_id', $this->id)
+                ->count();
+
+            // Check if the count of ratings matches the count of other participants
+            if ($ratingsCount !== $otherParticipants->count() || $otherParticipants->count() <= 0 || $ratingsCount <= 0) {
+                return 'Still Voting: '.$ratingsCount.' '.$otherParticipants->count().' '.$otherParticipants->pluck('id');
+            }
         }
         
-
         return 'Done';
+    }
+
+    function checkMatchedRatedEachOther()
+    {
+
+    }
+
+    function getRating(User $userFrom, User $userTo)    
+    {
+        return $this->eventRatings()->where('user_id_from', $userFrom->id)->where('user_id_to', $userTo->id)->first();
     }
 
 }
