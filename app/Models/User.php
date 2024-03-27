@@ -76,32 +76,35 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(RatingEvent::class, 'user_id_from');
     }
 
-    public function eventRatingsReceived()
-    {
-        return $this->hasMany(RatingEvent::class, 'user_id_to');
-    }
     public function getValidRatingsForEvent($eventId)
     {
-        return $this->getEvent($eventId)->matchedParticipants()
-            ->where('users.id', '!=', $this->id) // Specify the users table alias
-            ->whereHas('eventRatingsGiven', function (Builder $query) use ($eventId) {
-                $query->where('event_ratings.event_id', $eventId) // Specify the event_ratings table alias
-                    ->where('event_ratings.rating', '!=', 'no');
-            })
-            ->whereHas('eventRatingsReceived', function (Builder $query) use ($eventId) {
-                $query->where('event_ratings.event_id', $eventId) // Specify the event_ratings table alias
-                    ->where('event_ratings.rating', '!=', 'no');
-            })
-            ->with(['eventRatingsGiven', 'eventRatingsReceived'])
-            ->get();
-    }
-    public function canSee($otheruserid){
-        $otheruser = $this->where('id', $otheruserid)->first();
-        $user = auth()->user();
-
-        if($user->events()->latest('created_at')->first()->id == $otheruser->events()->latest('created_at')->first()->id ){
-            return true;
+        $matchedParticipants = $this->getEvent($eventId)->matchedParticipants($this)->get();
+    
+        foreach ($matchedParticipants as $key => $matchedParticipant) {
+            $ratingEvent = $this->getEvent($eventId)->first();
+    
+            $ratingNoFrom = $ratingEvent->ratings()
+                ->where('user_id_from', $this->id)
+                ->where('user_id_to', $matchedParticipant->id)
+                ->where('rating', 'no')
+                ->exists();
+    
+            $ratingNoTo = $ratingEvent->ratings()
+                ->where('user_id_to', $this->id)
+                ->where('user_id_from', $matchedParticipant->id)
+                ->where('rating', 'no')
+                ->exists();
+    
+            if ($ratingNoFrom || $ratingNoTo) {
+                unset($matchedParticipants[$key]);
+            }
         }
-        return false;
+    
+        return $matchedParticipants;
+    }
+    
+    public function canSee($otheruserid){
+        $otherusersid = $this->events()->latest('created_at')->first()->matchedParticipants($this)->get()->pluck('id')->toArray();
+        return in_array($otheruserid,$otherusersid);
     }
 }

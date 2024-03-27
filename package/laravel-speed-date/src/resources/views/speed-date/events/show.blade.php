@@ -54,7 +54,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Name</th>
+                                <th>First Name</th>
                                 <th>Nick Name</th>
                                 @can('sd_event_edit')
                                 <th>Last Name</th>
@@ -77,15 +77,30 @@
                             </tr>
                         </thead>
                         <tbody>
+
                             @foreach($participants as $participant)
                             <tr>
-                                <td>{{ $participant->name }}</td>
+                                <td>
+                                    <a href="{{ route('users.show', $participant->id) }}"
+                                        style="text-decoration: underline; color: #007bff; text-decoration-color: #007bff;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle overflow-hidden mr-2"
+                                                style="width: 40px; height: 40px;">
+                                                <img src="{{ asset($participant->avatar) }}"
+                                                    alt="{{ $participant->name }}"
+                                                    class="w-100 h-100">
+                                            </div>
+                                            <span class="ml-2"
+                                                style="margin-left: 8px !important;">{{ $participant->name }}</span>
+                                        </div>
+                                    </a>
+                                </td>
                                 <td>{{ $participant->bio->nickname }}</td>
                                 @if(auth()->user()->id == 1)
-                                <td>Last Name</td>
-                                <td>Email</td>
-                                <td>Phone</td>
-                                <td>City</td>
+                                <td>{{ $participant->bio->lastname }}</td>
+                                <td>{{ $participant->email }}</td>
+                                <td>{{ $participant->bio->phone }}</td>
+                                <td>{{ $participant->bio->city }}</td>
                                 @endif
                                 <td>{{ $participant->bio->occupation }}</td>
                                 <td>{{ $participant->bio->birthdate }}</td>
@@ -102,7 +117,7 @@
                                     @if(auth()->user()->hasRole('User'))
                                     @php
                                     $alreadyRated = $event->getRating(auth()->user(), $participant);
-                                    dump($alreadyRated);
+                                    // dump($alreadyRated);
                                     @endphp
 
                                     @can('sd_rating_create')
@@ -174,36 +189,38 @@
                                         </div>
                                     </a>
                                 </td>
-                                @if(auth()->user()->hasRole('User'))
-                                    @php
-                                        $alreadyRated = RatingEvent::where([
-                                            ['user_id_from', auth()->user()->id],
-                                            ['user_id_to', $item->id],
-                                            ['event_id', $event->id]
-                                        ])->exists();
-                                    @endphp
+                                <td>
+                                    @if(auth()->user()->hasRole('User'))
+                                        @php
+                                            $alreadyRated = RatingEvent::where([
+                                                ['user_id_from', auth()->user()->id],
+                                                ['user_id_to', $item->id],
+                                                ['event_id', $event->id]
+                                            ])->exists();
+                                        @endphp
 
-                                    @can('sd_rating_create')
-                                        {{-- @if(!$alreadyRated) --}}
-                                            <a href="#"
-                                                class="btn btn-sm btn-outline-primary mr-2 rate-button" style="width:100px;"
-                                                onclick="openRateModal('{{ $participant->email }}', '{{ $event->id }}')"><i
-                                                    class="bi bi-activity"></i> Rate Now</a>
-                                        {{-- @endif --}}
-                                    @endcan
-                                @else
-                                    @can('sd_rating_create')
-                                    @php
-                                    $route = route('speed_date.events.removeParticipant', ['eventId' => $event->id, 'userId' => $participant->id]);
-                                    @endphp
-                                        <a href="#"
-                                            onclick="confirmDelete($route, 'POST', {color: 'danger', text: 'Yes, delete it!'})"
-                                            class="btn btn-danger btn-sm"
-                                            title="{{ __('global.remove') }}">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    @endcan
-                                @endif
+                                        @can('sd_rating_create')
+                                            {{-- @if(!$alreadyRated) --}}
+                                                <a href="#"
+                                                    class="btn btn-sm btn-outline-primary mr-2 rate-button" style="width:100px;"
+                                                    onclick="openRateModal('{{ $participant->email }}', '{{ $event->id }}')"><i
+                                                        class="bi bi-activity"></i> Rate Now</a>
+                                            {{-- @endif --}}
+                                        @endcan
+                                    @else
+                                        @can('sd_rating_create')
+                                        @php
+                                        $route = route('speed_date.events.removeParticipantRating', ['ratingId' => $rating->id]);
+                                        @endphp
+                                            <a
+                                                onclick="confirmDelete('{{ $route }}', 'POST', {color: 'danger', text: 'Yes, delete it!'})"
+                                                class="btn btn-danger btn-sm"
+                                                title="{{ __('global.remove') }}">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        @endcan
+                                    @endif
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>

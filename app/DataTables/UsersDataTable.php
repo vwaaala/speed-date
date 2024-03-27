@@ -123,7 +123,7 @@ class UsersDataTable extends DataTable
     {
         return [
             Column::make('id'), // Column for 'id'
-            Column::make('name'), // Column for 'name'
+            Column::make('name')->title('First Name'), // Column for 'name'
             Column::make('email'), // Column for 'email'
             Column::make('status'), // Column for 'status'
             Column::make('created_at'), // Column for 'created_at'
