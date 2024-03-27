@@ -50,7 +50,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Name</th>
+                        <th>First Name</th>
                         <th>Nick Name</th>
                         <th>Last Name</th>
                         <th>Email</th>
@@ -89,8 +89,8 @@
                             <td>{{ $user->bio->occupation }}</td>
                             <td>{{ $user->bio->birthdate }}</td>
                             <td>{{ $user->bio->gender }}</td>
-                            <td>{{ $user->eventRatingsGiven->last()->rating }}</td>
-                            <td>{{ $user->eventRatingsReceived->last()->rating }}</td>
+                            <td>{{ $user->events()->latest('created_at')->first()->ratings()->where('user_id_from',$user->id)->where('user_id_to',$participant->id)->first()->rating }}</td>
+                            <td>{{ $user->events()->latest('created_at')->first()->ratings()->where('user_id_from',$participant->id)->where('user_id_to',$user->id)->first()->rating }}</td>
                         </tr>
                     @endforeach
                 </tbody>

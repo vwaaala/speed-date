@@ -89,6 +89,16 @@ class DatingEvent extends Model
     {
         return $this->eventRatings()->where('user_id_from', $userFrom->id)->where('user_id_to', $userTo->id)->first();
     }
+    public function hasRatingsFromParticipants($userId)
+    {
+        return $this->eventRatings()
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id_to', $userId)
+                    ->orWhere('user_id_from', $userId);
+            })
+            ->exists();
+    }
+
 
 }
 

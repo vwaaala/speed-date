@@ -159,6 +159,8 @@ class DatingEventController extends Controller
 
     public function destroy(DatingEvent $event)
     {
+        $event->eventRatings()->delete();
+        $event->participants()->detach();
         $event->delete();
 
         return redirect()->back()->with('success', 'Event deleted successfully.');
@@ -166,18 +168,36 @@ class DatingEventController extends Controller
 
     public function removeParticipant($eventId, $userId)
     {
-        $event = DatingEvent::findOrfail($eventId);
+        $event = DatingEvent::findOrfail($eventId);// Check if the user has received any ratings from event participants
+        if ($event->hasRatingsFromParticipants($userId)) {
+            // If ratings exist, delete them before removing the participant
+            RatingEvent::where('event_id', $eventId)
+                ->where('user_id_to', $userId)
+                ->delete();
+            RatingEvent::where('event_id', $eventId)
+                ->where('user_id_from', $userId)
+                ->delete();
+        }
         $event->participants()->detach($userId);
 
         return redirect()->back()->with('success', 'Removed participant successfully.');
     }
+    public function removeParticipantRating($ratingId)
+    {
+        $rating = RatingEvent::findOrfail($ratingId)->delete();
+
+        return redirect()->back()->with('success', 'Removed rating successfully.');
+    }
+    
     function finalizeEvent($eventId)
     {
         // Get all participants of the event
-        $participants = DatingEvent::findOrFail($eventId)->matchedParticipants;
+        $participants = DatingEvent::findOrFail($eventId)->participants;
         foreach ($participants as $participant) {
             // Get all other participants except the current one
-            $otherParticipants = $participants->except($participant->id);
+            // $otherParticipants = $participants->except($participant->id);
+            $otherParticipants = $participant->getEvent($eventId)->matchedParticipants($participant)->get();
+
 
             // Check if the participant has rated all other participants
             $ratingsCount = RatingEvent::where('user_id_from', $participant->id)
@@ -190,13 +210,14 @@ class DatingEventController extends Controller
                 return redirect()->route('speed_date.events.index')->with('error', 'Vote is not finished yet.');
             }
         }
+        // dd($participants->count());
 
         foreach ($participants as $participant) {
             $validUsers = $participant->getValidRatingsForEvent($eventId);
             Notification::route('mail', $participant->email)->notify(new VoteComplete($validUsers, $participant));
-            if(auth()->user()->id == 1){
-                Notification::route('mail', auth()->user()->email)->notify(new VoteComplete($validUsers, $participant));
-            }
+            // if(auth()->user()->id == 1){
+            //     Notification::route('mail', auth()->user()->email)->notify(new VoteComplete($validUsers, $participant));
+            // }
         }
 
 

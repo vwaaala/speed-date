@@ -9,6 +9,7 @@ Route::name('speed_date.')->middleware(['web', 'auth', 'redirectusertoevent', 'c
         Route::controller(DatingEventController::class)->group(function () {
             Route::post('user-uploads', 'uploadUsers')->name('uploadUsers');
             Route::post('{eventId}/{userId}/remove-participant', 'removeParticipant')->name('removeParticipant');
+            Route::post('{ratingId}/remove-participant', 'removeParticipantRating')->name('removeParticipantRating');
             Route::get('{eventId}/finalize-event', 'finalizeEvent')->name('finalizeEvent');
         });
     });

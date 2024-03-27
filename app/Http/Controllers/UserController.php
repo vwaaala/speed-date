@@ -93,8 +93,9 @@ class UserController extends Controller
      */
     public function edit(User $user): View|\Illuminate\Foundation\Application|Factory|Application
     {
+        
         if(auth()->user()->id != 1 && auth()->user()->id != $user->id){
-            abort('403', 'Access Forbidden!');
+            abort('403', 'Access Denied!');
         }
         if (auth()->user()->hasRole('Super Admin')) {
             $roles = Role::all()->pluck('name');
@@ -102,8 +103,7 @@ class UserController extends Controller
             $roles = Role::whereNotIn('name', ['Super Admin', 'Admin'])->pluck('name');
         }
         $events = DatingEvent::orderBy('created_at', 'desc')->select('id', 'name')->get();
-
-        if (auth()->user()->id == $user->id && auth()->user()->hasRole('User')) {
+        if (auth()->user()->id == $user->id && auth()->user()->hasPermissionTo('user_edit')) {
             $roles = [];
             $events = [];
         }
@@ -117,6 +117,9 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         if(auth()->check()){
+            if(auth()->user()->id != 1 && auth()->user()->id != $user->id){
+                abort('403', 'Access Denied!');
+            }
             if ($user->update(['name' => $request->get('name'), 'status' => $request->get('status') != null ? $request->get('status') : $user->status])) {
                 // Check if avatar file exists in requestW
                 if ($request->hasFile('avatar')) {
@@ -149,7 +152,7 @@ class UserController extends Controller
                     ]);
                     $user->update(['email' => $request->get('email')]);
                     $event = DatingEvent::findOrFail($request->get('event'));
-                    $event->participants()->syncWithoutDetaching($event->id);
+                    $event->participants()->syncWithoutDetaching($user->id);
                 }
                 if(auth()->user()->id != 1){
                     $eventid = $user->events->pluck('id')->first();
@@ -183,7 +186,7 @@ class UserController extends Controller
      */
     public function show(User $user): Factory|\Illuminate\Foundation\Application|View|Application|RedirectResponse
     {
-        if ((auth()->user()->id == 1 || (auth()->user()->id != 1  && auth()->user()->id != $user->id && auth()->user()->canSee($user->id)) || auth()->user()->id == $user->id)) {
+        if ((auth()->user()->id == 1 || auth()->user()->canSee($user->id) || auth()->user()->id == $user->id)) {
             return view('pages.users.view', compact('user'));
         }
         return redirect()->back()->with('error', 'You are not authorized to view the user');
