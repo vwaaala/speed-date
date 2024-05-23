@@ -81,8 +81,7 @@
     <script>
         $(document).ready(function() {
             let currentDate = new Date();
-            currentDate.setHours(currentDate.getHours() + 24); // Set the minimum date to 5 hours later
-
+            currentDate.setDate(currentDate.getDate());
             $('#datepicker').datepicker({
                 format: 'dd-mm-yyyy',
                 autoclose: true,
